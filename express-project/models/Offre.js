@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const annonce_schema = new mongoose.Schema({
+const offre_schema = new mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -25,7 +25,12 @@ const annonce_schema = new mongoose.Schema({
         type: String,
         enum : ["Co-Voiturage",'Livraison',"Taxi"],
         required: true
-    }
+    },
+    Vehicule:{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Vehicule'
+    },
 }, { timestamps: true })
 
-module.exports = mongoose.model("Annonce", annonce_schema)
+module.exports = mongoose.model("Offre", offre_schema)
