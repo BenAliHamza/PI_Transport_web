@@ -1,0 +1,21 @@
+*{
+  margin: 0 ;
+}
+
+*:focus {
+  outline: 0 !important;
+}
+*:hover {
+  outline: 0 !important;
+}
+
+a{
+  text-decoration: none;
+}
+ul{
+  list-style-type: none;
+}
+h1, h2, h3, h4, h5, h6{
+  font-weight: unset;
+  margin: 0;
+}
