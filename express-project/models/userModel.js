@@ -1,6 +1,6 @@
 // needed packages Import
 const mongoose = require("mongoose");
-const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/commonService");
+const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/services/commonService");
 const { Schema } = mongoose;
 
 // user schema
