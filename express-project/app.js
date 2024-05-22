@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 var offreRouter = require("./routes/Offre");
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/PI"
 var app = express();
-mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,7 +40,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+if (process.env.NODE_ENV !== 'test') {
 
-app.listen(5000)
-
+mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
+ app.listen(5000)
+}
 module.exports = app;
