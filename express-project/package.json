@@ -23,7 +23,7 @@
     "supertest": "^7.0.0"
   },
   "jest": {
-    "setupFilesAfterEnv": ["<rootDir>/shared/setupTests.js"],
+    "setupFilesAfterEnv": ["./shared/setupTests.js"],
     "testEnvironment": "node"
   }
 }
