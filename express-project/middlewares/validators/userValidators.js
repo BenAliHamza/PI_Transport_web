@@ -1,7 +1,6 @@
 // userValidation.js
 const { body, validationResult } = require('express-validator');
 const {EMAIL_REGEX, PASSWORD_REGEX} = require("../../shared/services/commonService");
-const HttpResponseError = require("../../shared/services/httpResponseError");
 
 const validateUser = [
   body('pseudo')
@@ -29,8 +28,7 @@ const validateUser = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const errorMessages = errors.array().map(error => error.msg).join(', ');
-      return next(new HttpResponseError(400, errorMessages));
+      res.status(403).json (errors);
     }
     next();
   }
