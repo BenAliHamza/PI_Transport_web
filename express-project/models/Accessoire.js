@@ -18,7 +18,7 @@ const accessoire_schema = mongoose.Schema({
     prix: 
     { type: Number, min: 0 },
     etat: {
-        type: string,
+        type: String,
         enum : ["Vendue",'Disponible'],
         default: "Disponible"
     }

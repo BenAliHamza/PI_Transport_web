@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const reclamation_schema = mongoose.Schema({
+const reclamationSchema = mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -11,16 +11,21 @@ const reclamation_schema = mongoose.Schema({
         required: true
     },
     description: {
-        default: "",
-        type: String
+        type: String,
+        default: ""
     },
     type: {
         type: String,
         enum : ["Paiement",'Retard',"PanneApplication"],
         required: true
+    },
+    etat: {
+        type: String,
+        enum : ["En attente","Traiter"],
+        default:"En attente",
     }
 
 }, { timestamps: true });
 
 
-module.exports = mongoose.model('Reclamation', reclamation_schema);
+module.exports = mongoose.model('Reclamation', reclamationSchema);

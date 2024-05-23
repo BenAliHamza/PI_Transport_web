@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const annonce_schema = new mongoose.Schema({
+const annonceSchema = new mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,

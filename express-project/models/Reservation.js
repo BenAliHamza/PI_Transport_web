@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const reservation_schema = new mongoose.Schema({
+const reservationSchema = new mongoose.Schema({
     user:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
