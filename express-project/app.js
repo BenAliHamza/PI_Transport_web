@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
+var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/PI"
 var app = express();
 mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
 
