@@ -1,0 +1,25 @@
+# Get all offers
+GET http://localhost:5000/offres
+Accept: application/json
+
+###
+
+# Create a new offer
+POST http://localhost:5000/offres
+Content-Type: application/json
+
+{
+  "expediteur": "605c72d7c9875e0015e7f5e3",
+  "titre": "Road Trip",
+  "lieu_depart": "New York",
+  "lieu_arrive": "Boston",
+  "heure_depart": "2024-12-01T10:00:00Z",
+  "type": "Co-Voiturage",
+  "vehicule": "605c72d7c9875e0015e7f5e4"
+}
+
+###
+
+# Get offer by ID
+GET http://localhost:3000/5000/605c72d7c9875e0015e7f5e5
+Accept: application/json

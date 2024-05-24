@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Vehicule = require('./Vehicule');
 const { Schema } = mongoose;
 
 const offre_schema = new Schema({
@@ -44,7 +45,7 @@ const offre_schema = new Schema({
         },
         required: [true, 'Type is required']
     },
-    Vehicule: {
+    vehicule: {
         type: Schema.Types.ObjectId,
         required: [true, 'Vehicule is required'],
         ref: 'Vehicule',
@@ -57,4 +58,23 @@ const offre_schema = new Schema({
     }
 }, { timestamps: true });
 
+// offre_schema.pre('save', async function(next) {
+//   try {
+//     const userExists = await User.findById(this.expediteur);
+//     const vehiculeExists = await Vehicule.findById(this.vehicule)
+//     if (!userExists) {
+//       const error = new Error('Expediteur does not exist');
+//       error.statusCode = 400;
+//       return next(error);
+//     }
+//     if (!vehiculeExists) {
+//       const error = new Error('Expediteur does not exist');
+//       error.statusCode = 400;
+//       return next(error);
+//     }
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 module.exports = mongoose.model("Offre", offre_schema);

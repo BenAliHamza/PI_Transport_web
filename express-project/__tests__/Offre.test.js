@@ -4,11 +4,10 @@ const app = require('../app');
 const User = require('../models/User');
 const Offre = require('../models/Offre');
 const Vehicule = require('../models/Vehicule');
-const { ObjectId } = require('mongoose');
 
 describe('Offre routes', () => {
   let user, vehicule;
-
+  const randomId = "4eb6e7e7e9b7f4194e000001";
   beforeAll(async () => {
     user = await User.create({
       pseudo: 'john_doe',
@@ -38,7 +37,7 @@ describe('Offre routes', () => {
         lieu_arrive: 'Los Angeles',
         heure_depart: new Date(Date.now() + 10000).toISOString(),
         type: 'Co-Voiturage',
-        Vehicule: vehicule._id
+        vehicule: vehicule._id
       });
     expect(response.status).toBe(400);
     expect(response.body.errors).toEqual([
@@ -58,7 +57,7 @@ describe('Offre routes', () => {
         lieu_arrive: 'Los Angeles',
         heure_depart: new Date(Date.now() + 10000).toISOString(),
         type: 'Co-Voiturage',
-        Vehicule: vehicule._id
+        vehicule: vehicule._id
       });
     expect(response.status).toBe(400);
     expect(response.body.errors).toEqual([
@@ -78,15 +77,13 @@ describe('Offre routes', () => {
         lieu_arrive: 'Los Angeles',
         heure_depart: new Date(Date.now() + 10000).toISOString(),
         type: 'Co-Voiturage',
-        Vehicule: vehicule._id
+        vehicule: vehicule._id
       });
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('_id');
   });
 
   it('should return Error if the User Does Not Exist', async () => {
-    const randomId = new ObjectId().toString();
-    console.log(randomId);
     const response = await request(app)
       .post('/offres')
       .send({
@@ -96,7 +93,7 @@ describe('Offre routes', () => {
         lieu_arrive: 'Los Angeles',
         heure_depart: new Date(Date.now() + 10000).toISOString(),
         type: 'Co-Voiturage',
-        Vehicule: vehicule._id
+        vehicule: vehicule._id
       });
     expect(response.status).toBe(400);
     expect(response.body.errors).toEqual([
@@ -104,5 +101,16 @@ describe('Offre routes', () => {
         msg: 'Expediteur must be a valid ObjectId',
         type: "field"
       })])
+  });
+
+  it('should return 404 If The Offer Does Not Exist', async () => {
+    const response = await request(app)
+      .get(`/offres/${randomId}`)
+    expect(response.status).toBe(404);
+    // expect(response.body.errors).toEqual([
+    //   expect.objectContaining({
+    //     msg: 'Expediteur must be a valid ObjectId',
+    //     type: "field"
+    //   })])
   });
 });
