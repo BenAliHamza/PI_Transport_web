@@ -59,4 +59,15 @@ const UpdateOffreValidator =  [
 const GetOffreValidator = [
   param('id').isMongoId().withMessage('Invalid Offer Id')
 ]
-module.exports = { AddOffreValidator, GetOffreValidator, UpdateOffreValidator }
+
+
+const GetOffresValidator = [
+    query('expediteur').optional().isMongoId().withMessage('Invalid expediteur ID'),
+    query('titre').optional().isString(),
+    query('lieu_depart').optional().isString(),
+    query('lieu_arrive').optional().isString(),
+    query('heure_depart').optional().isISO8601().toDate().withMessage('Invalid departure time'),
+    query('type').optional().isIn(["Co-Voiturage", 'Livraison', "Taxi"]).withMessage('Invalid type'),
+    query('vehicule').optional().isMongoId().withMessage('Invalid vehicule ID')
+  ]
+module.exports = { AddOffreValidator, GetOffreValidator, UpdateOffreValidator, GetOffresValidator }
