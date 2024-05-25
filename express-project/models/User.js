@@ -1,5 +1,6 @@
 // needed packages Import
 const mongoose = require("mongoose");
+const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/commonService");
 const { Schema } = mongoose;
 
 // user schema
@@ -13,10 +14,12 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      match: EMAIL_REGEX,
     },
     password: {
       type: String,
-      required: true
+      required: true ,
+      match: PASSWORD_REGEX,
     },
     phone: {type : Number , required :false },
     image: {type : String , required : false },
