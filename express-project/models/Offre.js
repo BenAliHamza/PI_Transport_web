@@ -31,6 +31,12 @@ const offre_schema = new mongoose.Schema({
         required: true,
         ref: 'Vehicule'
     },
+    // Ajouter une référence pour les reservation concernant cette offre dans un tableau
+    reservation : [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Reservation'
+    }]
 }, { timestamps: true })
 
 module.exports = mongoose.model("Offre", offre_schema)

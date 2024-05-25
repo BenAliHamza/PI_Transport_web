@@ -1,12 +1,15 @@
 //routes 
 const express = require('express')
 
-const {createAnnonce, getAll } = require('../controllers/Annonce')
+const {createAnnonce, getAll, getById, updateAnnonce, deleteAnnonce } = require('../controllers/Annonce')
 
 const router = express.Router()
 
 router.post('', createAnnonce)
 router.get('', getAll)
+router.get('/:id', getById)
+router.put('/:id', updateAnnonce)
+router.delete('/:id', deleteAnnonce)
 
 module.exports = router;
 

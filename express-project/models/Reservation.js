@@ -6,13 +6,14 @@ const reservation_schema = new mongoose.Schema({
         ref: 'User'
     },
     message : {
-        type : string , 
+        type : String , 
         //required : true
     },
     nb_places:  { type: Number, min: 0 },
     status:  {
         type: String,
         enum : ["acceptée", "refusé", "en attente"],
+        default : "en attente"
         //required: true
     },
     offre:{

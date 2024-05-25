@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 // Adresse { region , ville }
+const AddresseSchema = new mongoose.Schema({
+    region:String,
+    ville : String
+})
 
 const annonce_schema = new mongoose.Schema({
     User :{
@@ -13,11 +17,11 @@ const annonce_schema = new mongoose.Schema({
         //required: true
     },
     lieu_depart: {// Addresse
-        type: String,
+        type: AddresseSchema,
        // required: true
     },
     lieu_arrive: {// Addresse
-        type: String,
+        type: AddresseSchema,
         //required: true
     },
     heure_depart: {
