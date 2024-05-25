@@ -1,30 +1,33 @@
 const mongoose = require('mongoose')
+
+// Adresse { region , ville }
+
 const annonce_schema = new mongoose.Schema({
-    expediteur:{
+    User :{
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        //required: true,
         ref: 'User'
     },
     titre: {
         type: String,
-        required: true
+        //required: true
     },
-    lieu_depart: {
+    lieu_depart: {// Addresse
         type: String,
-        required: true
+       // required: true
     },
-    lieu_arrive: {
+    lieu_arrive: {// Addresse
         type: String,
-        required: true
+        //required: true
     },
     heure_depart: {
         type: Date,
-        required: true
+        //required: true
     },
     type: {
         type: String,
         enum : ["Co-Voiturage",'Livraison',"Taxi"],
-        required: true
+        //required: true
     }
 }, { timestamps: true })
 
