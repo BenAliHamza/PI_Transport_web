@@ -7,6 +7,9 @@ require('dotenv').config()
 var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var accessoireRoutes = require('./routes/accessoireRoutes');
+var categorieAccessoireRoutes = require('./routes/categorieAccessoireRoutes');
+
 
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 var app = express();
@@ -20,6 +23,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/accessoires', accessoireRoutes);
+app.use('/categories', categorieAccessoireRoutes);
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
