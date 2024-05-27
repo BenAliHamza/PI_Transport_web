@@ -26,17 +26,13 @@ const offre_schema = new mongoose.Schema({
         enum : ["Co-Voiturage",'Livraison',"Taxi"],
         required: true
     },
-    Vehicule:{
+    vehicule:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Vehicule'
     },
     // Ajouter une référence pour les reservation concernant cette offre dans un tableau
-    reservation : [{
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Reservation'
-    }]
+    
 }, { timestamps: true })
 
 module.exports = mongoose.model("Offre", offre_schema)

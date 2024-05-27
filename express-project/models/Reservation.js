@@ -9,7 +9,7 @@ const reservation_schema = new mongoose.Schema({
         type : String , 
         //required : true
     },
-    nb_places:  { type: Number, min: 0 },
+    places:  { type: Number, min: 0 },
     status:  {
         type: String,
         enum : ["acceptée", "refusé", "en attente"],

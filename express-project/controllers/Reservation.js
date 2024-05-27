@@ -1,9 +1,17 @@
 // Importation du modèle Reservation
 const Reservation = require('../models/Reservation');
+const Offre = require("./../models/Offre");
+const Vehicule = require("../models/Vehicule")
  
 // Fonction pour créer une réservation
 const createReservation = async (req, res) => {
     try {
+        var offre = await Offre.findById(req.body.offre).populate("vehicule");
+        var reservation_offre = await Reservation.find({offre : offre._id});
+        var reserved_places =  reservation_offre.reduce((totale, res) => totale + res.places, 0);
+        if(req.body.places + reserved_places > offre.vehicule.places){
+                throw new Error('Nombre De places insuffisant')
+        }
         const reservation = new Reservation({
             ...req.body,
             //offre : req.params.offreID
