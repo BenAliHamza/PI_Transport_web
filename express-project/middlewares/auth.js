@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Users = require("../models/userModel");
+const Users = require("../models/User");
 
 // Middleware to verify JWT token and admin role
 async function verifyAdmin(req, res, next) {

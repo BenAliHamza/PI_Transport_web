@@ -1,6 +1,6 @@
 var express = require('express');
 const { validateUserCreation , validateLogin} = require("../middlewares/validators/userValidators");
-const User = require("../models/userModel");
+const User = require("../models/User");
 const {addUser, loginUser, getUserByType , getUserById , getUserByNumber , getUserByEmail , getAllUser , getAdminAllUser , deleteUserById} = require("../controllers/userController");
 const {verifyToken , verifyAdmin} = require("../middlewares/auth");
 const router = express.Router();
