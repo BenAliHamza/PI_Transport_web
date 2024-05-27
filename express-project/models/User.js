@@ -1,6 +1,6 @@
 // needed packages Import
 const mongoose = require("mongoose");
-const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/commonService");
+const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/services/commonService");
 const { Schema } = mongoose;
 
 // user schema
@@ -27,6 +27,6 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 // create the user model
-const User = mongoose.model("Users", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

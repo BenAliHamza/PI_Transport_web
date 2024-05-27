@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var offreRouter = require("./routes/Offre");
+var vehiculeRoutes = require("./routes/vehicule")
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/PI"
 var app = express();
 
@@ -24,6 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/offres', offreRouter)
 app.use('/users', usersRouter);
+app.use('/vehicules', vehiculeRoutes);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
