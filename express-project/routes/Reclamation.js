@@ -1,8 +1,11 @@
-const express= require("express")
-const router= express.Router();
+const express = require('express');
+const router = express.Router();
+const reclamationController = require('../controllers/Reclamation');
 
-const {getReclamations} = require("./../controllers/Reclamation")
+router.post('/', reclamationController.createReclamation);
+router.get('/', reclamationController.getReclamations);
+router.get('/:id', reclamationController.getReclamation);
+router.patch('/:id', reclamationController.updateReclamation);
+router.delete('/:id', reclamationController.deleteReclamation);
 
-router.get('/', getReclamations);
-
-module.exports = router ; 
+module.exports = router;

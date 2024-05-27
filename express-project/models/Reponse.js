@@ -9,7 +9,7 @@ reclamation : {
 expediteur :  {
     type: mongoose.Types.ObjectId,
     ref: "User",
-    required: true
+    required: false
 },
 reponse: {
     type: String , 

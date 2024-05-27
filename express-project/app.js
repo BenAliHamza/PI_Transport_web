@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var reclamationRouter = require('./routes/Reclamation');
-var reponseRouter = require('./routes/Reponse')
+var reponseRouter = require('./routes/Reponse');
 const Reponse = require('./models/Reponse');
 
 
