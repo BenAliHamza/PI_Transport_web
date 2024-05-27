@@ -18,8 +18,8 @@ exports.createAccessoire = async (req, res) => {
     }
 };
 
-// Get All Accessoires
-// Get All Accessoires with Search, Filtering, and Sorting
+//
+// Search, Filtering, and Sorting
 exports.getAllAccessoires = async (req, res) => {
     try {
         let query = {};

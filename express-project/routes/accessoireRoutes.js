@@ -1,6 +1,6 @@
 
 const express = require('express');
-const accessoireController = require('../controllers/accessoireController');
+const accessoireController = require('../controllers/Accessoire');
 const router = express.Router();
 
 router.post('/', accessoireController.createAccessoire);
