@@ -7,6 +7,10 @@ require('dotenv').config()
 var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var reclamationRouter = require('./routes/Reclamation');
+var reponseRouter = require('./routes/Reponse')
+const Reponse = require('./models/Reponse');
+
 
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 var app = express();
@@ -22,6 +26,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/reclamations', reclamationRouter);
+app.use('/reponses', reponseRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -39,5 +45,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
+app.listen(5000);
 module.exports = app;
