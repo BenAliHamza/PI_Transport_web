@@ -1,13 +1,11 @@
-// needed packages Import
 const mongoose = require("mongoose");
-const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/commonService");
+const {EMAIL_REGEX, PASSWORD_REGEX , ROLE_REGEX ,STATUS_REGEX} = require("../shared/services/commonService");
 const { Schema } = mongoose;
 
 // user schema
 
 const userSchema = new Schema(
   {
-    pseudo: { type: String, required: true },
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: {
@@ -19,14 +17,25 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true ,
-      match: PASSWORD_REGEX,
     },
     phone: {type : Number , required :false },
     image: {type : String , required : false },
+    role: {
+      type: String,
+      required: false,
+      default: "DEFAULT",
+      match: ROLE_REGEX, // Only allows uppercase letters and underscores
+    },
+    status: {
+      type: String,
+      required: false,
+      default: "PENDING",
+      match: STATUS_REGEX, // Only allows specific statuses
+    }
   },
   { versionKey: false, timestamps: true }
 );
 // create the user model
-const User = mongoose.model("Users", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
