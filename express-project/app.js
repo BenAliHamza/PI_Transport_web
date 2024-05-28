@@ -10,6 +10,9 @@ var usersRouter = require('./routes/users');
 var offreRouter = require("./routes/Offre");
 var vehiculeRoutes = require("./routes/vehicule")
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/PI"
+const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
+
+var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 var app = express();
 
 
@@ -47,4 +50,7 @@ if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
   app.listen(5000)
 }
+app.use(notFoundError);
+app.use(errorHandler);
+
 module.exports = app;
