@@ -8,18 +8,18 @@ const Vehicule = require('../models/Vehicule');
 describe('Offre routes', () => {
   let user, vehicule;
   const randomId = "4eb6e7e7e9b7f4194e000001";
-  beforeAll(async () => {
+  beforeEach(async () => {
     user = new User({
       _id: '605c72d7c9875e0015e7f5e3',
       pseudo: 'testuser',
       firstname: 'Test',
       lastname: 'User',
       email: 'test@example.com',
-      password: 'Password12345678.',
+      password: 'Password12345678',
       phone: 1234567890,
     });
     await user.save();
-  
+
     vehicule = new Vehicule({
       _id: '605c72d7c9875e0015e7f5e4',
       proprietaire: '605c72d7c9875e0015e7f5e3',
@@ -28,7 +28,7 @@ describe('Offre routes', () => {
       places: 4,
     });
     await vehicule.save();
-  
+
     await Offre.create([
       {
         expediteur: '605c72d7c9875e0015e7f5e3',
@@ -137,46 +137,46 @@ describe('Offre routes', () => {
     const res = await request(app).get('/offres');
     expect(res.status).toBe(200);
     console.log(res.body);
-   // expect(res.body.length).toBe(2);
+    expect(res.body.length).toBe(2);
   });
 
-  // it('should filter offers by expediteur', async () => {
-  //   const res = await request(app).get('/offres').query({ expediteur: '605c72d7c9875e0015e7f5e3' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(2);
-  // });
+  it('should filter offers by expediteur', async () => {
+    const res = await request(app).get('/offres').query({ expediteur: '605c72d7c9875e0015e7f5e3' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(2);
+  });
 
-  // it('should filter offers by titre', async () => {
-  //   const res = await request(app).get('/offres').query({ titre: 'Road' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(1);
-  //   expect(res.body[0].titre).toBe('Road Trip');
-  // });
+  it('should filter offers by titre', async () => {
+    const res = await request(app).get('/offres').query({ titre: 'Road' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(res.body[0].titre).toBe('Road Trip');
+  });
 
-  // it('should filter offers by lieu_depart', async () => {
-  //   const res = await request(app).get('/offres').query({ lieu_depart: 'New York' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(1);
-  //   expect(res.body[0].lieu_depart).toBe('New York');
-  // });
+  it('should filter offers by lieu_depart', async () => {
+    const res = await request(app).get('/offres').query({ lieu_depart: 'New York' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(res.body[0].lieu_depart).toBe('New York');
+  });
 
-  // it('should filter offers by heure_depart', async () => {
-  //   const res = await request(app).get('/offres').query({ heure_depart: '2024-11-01T10:00:00Z' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(1);
-  //   expect(new Date(res.body[0].heure_depart).toISOString()).toBe('2024-11-01T10:00:00.000Z');
-  // });
+  it('should filter offers by heure_depart', async () => {
+    const res = await request(app).get('/offres').query({ heure_depart: '2024-11-01T10:00:00Z' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(new Date(res.body[0].heure_depart).toISOString()).toBe('2024-11-01T10:00:00.000Z');
+  });
 
-  // it('should filter offers by type', async () => {
-  //   const res = await request(app).get('/offres').query({ type: 'Taxi' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(1);
-  //   expect(res.body[0].type).toBe('Taxi');
-  // });
+  it('should filter offers by type', async () => {
+    const res = await request(app).get('/offres').query({ type: 'Taxi' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(1);
+    expect(res.body[0].type).toBe('Taxi');
+  });
 
-  // it('should filter offers by vehicule', async () => {
-  //   const res = await request(app).get('/offres').query({ vehicule: '605c72d7c9875e0015e7f5e4' });
-  //   expect(res.status).toBe(200);
-  //   expect(res.body.length).toBe(2);
-  // });
+  it('should filter offers by vehicule', async () => {
+    const res = await request(app).get('/offres').query({ vehicule: '605c72d7c9875e0015e7f5e4' });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(2);
+  });
 });

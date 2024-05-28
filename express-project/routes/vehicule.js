@@ -3,6 +3,7 @@ const express = require('express');
 const { body, param, query, validationResult } = require('express-validator');
 const Vehicule = require('../models/Vehicule');
 const User = require('../models/User');
+const { AddVehiculeValidator } = require('../validators/Vehicule');
 
 const router = express.Router();
 
@@ -19,12 +20,7 @@ async function checkProprietaireExists(req, res, next) {
 }
 
 // Create a vehicule
-router.post('/', [
-  body('proprietaire').isMongoId().withMessage('Invalid proprietaire ID'),
-  body('marque').isString().withMessage('Marque must be a string'),
-  body('model').isString().withMessage('Model must be a string'),
-  body('places').isInt({ min: 1 }).withMessage('Places must be at least 1')
-], checkProprietaireExists, async (req, res) => {
+router.post('/', AddVehiculeValidator, checkProprietaireExists, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });

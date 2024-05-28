@@ -1,5 +1,5 @@
 # Get all offers
-GET http://localhost:5000/offres
+GET http://localhost:5000/offres?titre=new
 Accept: application/json
 
 ###
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
   "expediteur": "605c72d7c9875e0015e7f5e3",
-  "titre": "Road Trip",
+  "titre": "New Abc",
   "lieu_depart": "New York",
   "lieu_arrive": "Boston",
   "heure_depart": "2024-12-01T10:00:00Z",
