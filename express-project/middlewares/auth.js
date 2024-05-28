@@ -55,6 +55,8 @@ async function verifyToken(req, res, next) {
 
   // Extract token from authorization header
   const token = authHeader.split(' ')[1];
+
+  console.log(token);
   if (!token) {
     return res.status(401).json({ message: 'Token not provided' });
   }

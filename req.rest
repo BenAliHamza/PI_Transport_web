@@ -23,3 +23,23 @@ Content-Type: application/json
 # Get offer by ID
 GET http://localhost:3000/5000/605c72d7c9875e0015e7f5e5
 Accept: application/json
+
+
+
+# Post
+
+
+# Create a new offer
+POST http://localhost:5000/USERS
+Content-Type: application/json
+
+ { "pseudo": "testuser",
+      "firstname": "Test",
+      "lastname": "User",
+      "email": "test@example.com",
+      "password": "Password12345678",
+      "phone": 1234567890}
+
+
+
+

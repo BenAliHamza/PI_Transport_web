@@ -1,9 +1,6 @@
 const { body, param , query, validationResult } = require('express-validator');
 
 const AddOffreValidator = [
-  body('expediteur')
-      .notEmpty().withMessage('Expediteur is required')
-      .isMongoId().withMessage('Expediteur must be a valid ObjectId'),
   body('titre')
       .notEmpty().withMessage('Title is required')
       .isLength({ min: 3 }).withMessage('Title must be at least 3 characters long'),
