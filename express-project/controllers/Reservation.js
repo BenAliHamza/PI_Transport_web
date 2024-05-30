@@ -7,13 +7,13 @@ const Vehicule = require("../models/Vehicule")
 const createReservation = async (req, res) => {
     try {
         var placedisponible = await calculplacedisponible(req.body.offre)
+        const userId = req.user._id;
         if(placedisponible < req.body.places)
             return res.status(500).json({ message : 'Erreur lors de la création de la réservation', error : "nb de places insuffusants" })
         console.log(placedisponible);
         const reservation = new Reservation({
             ...req.body,
-            //offre : req.params.offreID
-            //user : req.user.id    // récupérer l'id de l'utilisateur qui fait la réservation
+            
         })
         await reservation.save()
         res.status(201).json(reservation)
