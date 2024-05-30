@@ -7,7 +7,7 @@ const router = express.Router();
  
 // Importation du contrôleur
 
-const { createReservation, getAllReservationsByUser, updateReservation, deleteReservation, acceptReservation, refuseReservation } = require('../controllers/Reservation');
+const { createReservation, getAllReservationsByUser, getAllReservationsByFilter, updateReservation, deleteReservation, acceptReservation, refuseReservation } = require('../controllers/Reservation');
  
 // Route pour créer une réservation
 
@@ -15,7 +15,10 @@ router.post('/', createReservation); // à ajouter :offreID
  
 // Route pour obtenir toutes les réservations d'un utilisateur
 
-router.get('/', getAllReservationsByUser); // :userId
+router.get('/', getAllReservationsByUser);// :userId
+
+
+router.get('/filter', getAllReservationsByFilter); // :userId
  
 // Route pour mettre à jour une réservation
 

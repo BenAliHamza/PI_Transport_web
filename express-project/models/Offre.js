@@ -31,6 +31,7 @@ const offre_schema = new mongoose.Schema({
         required: true,
         ref: 'Vehicule'
     },
+    // nb de place disponible selon le vehicule parceque leombre se décremente par rapport à plusieurs reservation 
     // Ajouter une référence pour les reservation concernant cette offre dans un tableau
     
 }, { timestamps: true })

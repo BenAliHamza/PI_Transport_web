@@ -9,8 +9,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
-
-var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
+require('./middlewares/LogicArchiveAnnonce');
+var connectionString = process.env.CONNECTION_STRING  ?? "mongodb://localhost:27017/Projet"
 var app = express();
 mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
 
@@ -45,5 +45,5 @@ app.use(function(err, req, res, next) {
 });
 
 
-app.listen(3000);
+//app.listen(3000);
 module.exports = app;

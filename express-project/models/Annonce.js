@@ -32,7 +32,13 @@ const annonce_schema = new mongoose.Schema({
         type: String,
         enum : ["Co-Voiturage",'Livraison',"Taxi"],
         //required: true
+    },
+    status: {
+        type: String,
+        enum: ["actif", "brouillant", "archivé"],
+        default: "brouillant"
     }
 }, { timestamps: true })
 
+annonce_schema.index({ createdAt: 1 });
 module.exports = mongoose.model("Annonce", annonce_schema)

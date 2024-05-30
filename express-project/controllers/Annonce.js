@@ -15,12 +15,19 @@ const Annonce = require('../models/Annonce')
 }
 
 const getAll = async (req, res) => {
-    try{
-        const annonces = await Annonce.find()
+    try {
+        const { status } = req.query;
+        const filter = status ? { status } : {};
+        const annonces = await Annonce.find(filter)
         res.status(200).json(annonces)
     } catch (error) {
-        res.status(500).json({ message : 'Erreur lors de l\'importation des annonces' , error : error.message})
+        res.status(500).json({ message: 'Erreur lors de l\'importation des annonces', error: error.message })
     }
+    /*
+    Get all active annonces: GET /?status=active
+    Get all draft annonces: GET /?status=draft
+    Get all archived annonces: GET /?status=archived 
+    */
 }
 
 const getById = async (req, res) => {
