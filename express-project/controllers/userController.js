@@ -4,8 +4,12 @@ const jwt = require('jsonwebtoken');
 const { sendActivationEmail }  = require('../shared/services/transporter')
 require('dotenv').config()
 
-
-
+function isConnectedOrAdmin(req, userId) {
+  return req.user.role === 'ADMIN' || req.user._id.toString() === userId;
+}
+function isAdmin(user){
+  return user.role === 'ADMIN';
+}
 
  async function   addUser(req, res) {
    try {
@@ -13,14 +17,15 @@ require('dotenv').config()
      if (email) {
        const user = await User.findOne({email: email});
        if (user) {
-         res.status(301).json({
+        return    res.status(301).json({
            message: "User email already exists",
          })
        } else {
          const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
          const newUser = await User.create({...req.body, password: hashedPassword});
-         await sendActivationEmail(newUser);
-         res.status(201).json({
+         const confirmation_link = await sendActivationEmail(newUser);
+        return  res.status(200).json({
+           confirmation_link,
            message: "New user has been created !!!",
            user: newUser
          })
@@ -28,10 +33,33 @@ require('dotenv').config()
      }
    } catch (e) {
      console.log(e);
-     res.status(500).json({error: e.message});
+    return  res.status(500).json({error: e.message});
    }
  }
- async function loginUser(req, res) {
+ async  function activate_user(req, res) {
+  const { token } = req.params;
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.id;
+    // Find the user and update the status
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { status: 'APPROVED' },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({ message: 'Account successfully activated' , newUser: user });
+  } catch (err) {
+   return  res.status(400).json({ message: 'Invalid request  or expired token' });
+  }
+}
+
+async function loginUser(req, res) {
      try {
        const {email, password} = req.body;
        if (!email || !password) {
@@ -42,19 +70,19 @@ require('dotenv').config()
        if (!user) {
          return res.status(404).json({message: 'User not found'});
        }
-       // if(user.status ==='PENDING'){
-       //   return res.status(403).json({ message: 'User account is pending activation' });
-       // }
-       // if(user.status ==='BANNED'){
-       //   return res.status(403).json({ message: 'User account is banned' });
-       // }
+       if(user.status ==='PENDING'){
+         return res.status(403).json({ message: 'User account is pending activation' });
+       }
+       if(user.status ==='BANNED'){
+         return res.status(403).json({ message: 'User account is banned' });
+       }
        const isMatch = await bcrypt.compare(password, user.password);
        if (!isMatch) {
          return res.status(401).json({message:  'The password you entered is incorrect'});
        }
        const token = jwt.sign({id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: process.env.TOKEN_EXPIRATION});
        const expiresAt = jwt.decode(token).exp * 1000; // Convert to milliseconds
-       res.status(200).json({
+       return  res.status(200).json({
          message: 'Login successful',
          token: token,
          expiresIn: expiresAt
@@ -62,14 +90,17 @@ require('dotenv').config()
 
      } catch (e) {
        console.error(e);
-       res.status(500).json({error: e.message});
+       return res.status(500).json({error: e.message});
      }
 
  }
  async function getUserByType(req, res) {
   try {
-    const { type, value } = req.params;
-
+    const { type, value } = req.query;
+    const isAdminConnected = isAdmin(req.user);
+    if(!isAdminConnected) {
+      return  res.status(401).json({message: 'You are not authorized to access this feature'});
+    }
     if (!type || !value) {
       return res.status(400).json({ message: 'Type and value are required in request body' });
     }
@@ -81,7 +112,7 @@ require('dotenv').config()
     const users = await User.aggregate(aggregationPipeline);
 
     if (!users || users.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ users: [] });
     }
 
     return res.status(200).json(users);
@@ -89,6 +120,39 @@ require('dotenv').config()
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: e.message });
+  }
+}
+async function getUserByTypeForSimpleUser(req, res) {
+  try{
+    const { type, value } = req.query;
+    if (!type || !value) {
+      return res.status(400).json({ message: 'Type and value are required in request body' });
+    }
+    if(isAdmin(!req.user)){
+      if( type ==='role' && value ==="ADMIN"){
+        return res.status(400).json({ message: 'You are not authorized to access this query (role : Admin)  as a  DEFAULT user' });
+      }
+      if( type ==='status' && value ==="PENDING"){
+        return res.status(400).json({ message: 'You are not authorized to access this query (status : PENDING )  as a DEFAULT user' });
+      }
+    }
+
+    const aggregationPipeline = [
+      { $match: { [type]: value } } ,   { $match: { role: { $ne: "ADMIN" }, status: { $ne: "PENDING" } } }
+    ];
+
+    const users = await User.aggregate(aggregationPipeline);
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'There is no user that satisfies the needed conditions', users : [] } );
+    }
+
+    return res.status(200).json(users);
+  }catch(err){
+    console.log(err)
+    res.status(500).json({
+      message : err.message
+     })
   }
 }
  async function getUserById(req, res) {
@@ -107,9 +171,9 @@ require('dotenv').config()
 async function getUserByEmail(req, res) {
   try {
     const { email } = req.params;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email : email });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: `User with email ${email} is not found` });
     }
     res.status(200).json({ user });
   } catch (e) {
@@ -119,10 +183,10 @@ async function getUserByEmail(req, res) {
 }
 async function getUserByNumber(req, res) {
   try {
-    const { phoneNumber } = req.params;
-    const user = await User.findOne({ phoneNumber });
+    const { phone } = req.params;
+    const user = await User.findOne({phone : phone });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: `User with phone number ${phone} is not found` });
     }
     res.status(200).json({ user });
   } catch (e) {
@@ -132,7 +196,7 @@ async function getUserByNumber(req, res) {
 }
 async  function getAllUser(req ,res){
   try {
-    const users = await User.find({ role: { $ne: 'ADMIN' } });
+    const users = await User.find({ role: { $ne: 'ADMIN' } , status : { $ne : "PENDING"} });
     res.status(200).json({ users });
   } catch (e) {
     console.error(e);
@@ -141,7 +205,7 @@ async  function getAllUser(req ,res){
 }
 async  function getAdminAllUser(req ,res){
   try {
-    const users = await User.find({ role: 'ADMIN' });
+    const users = await User.find();
     res.status(200).json({ users });
   } catch (e) {
     console.error(e);
@@ -153,7 +217,9 @@ async function deleteUserById(req, res){
     const userIdToDelete = req.params.id;
 
     // Check if the authenticated user is either the user to be deleted or an admin
-    if (req.user.role !== 'ADMIN' && req.user._id.toString() !== userIdToDelete) {
+    const state = isConnectedOrAdmin(req , userIdToDelete)
+
+    if (!state) {
       return res.status(403).json({ message: 'Forbidden: You are not allowed to delete this user' });
     }
     const deletedUser = await User.findByIdAndDelete(userIdToDelete);
@@ -167,6 +233,47 @@ async function deleteUserById(req, res){
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 }
+async function deleteAllUsers(req, res) {
+  try {
+    // Delete all users
+    await User.deleteMany({});
+
+    // Respond with success message
+    res.status(200).json({ message: 'All users deleted successfully' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Server error', error: e.message });
+  }
+}
+async function updateUser(req, res) {
+  try{
+    const {id} = req.params;
+    const isAuthorized = isConnectedOrAdmin(req , id);
+    if(!isAuthorized){
+      return   res.status(403).json({ message: 'You are not allowed to update this user' });
+    }
+    const updates  = req.body;
+    if(updates.password){
+      delete updates.password;
+    }
+    if(updates.email) {
+      delete updates.email ;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found to be updated !!! ' });
+    }
+    res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+
+  }catch (e){
+    res.status(500).json({
+      error: 'Internal server error',
+      message : e.message
+
+    })
+  }
+}
 
 
- module.exports = { addUser, loginUser , getUserByType  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
+ module.exports = {updateUser ,  addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}

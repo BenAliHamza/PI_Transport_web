@@ -31,7 +31,8 @@ const userSchema = new Schema(
       required: false,
       default: "PENDING",
       match: STATUS_REGEX, // Only allows specific statuses
-    }
+    },
+    ville :  {type : String , required : true }
   },
   { versionKey: false, timestamps: true }
 );

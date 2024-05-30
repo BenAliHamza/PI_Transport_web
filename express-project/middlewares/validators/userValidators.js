@@ -26,6 +26,9 @@ const validateUserCreation = [
   body('image')
     .optional()
     .isString().withMessage('Image must be a string.'),
+  body('ville')
+    .notEmpty().withMessage('Ville is required.')
+    .isString().withMessage('Ville must be a string.'),
   body('role')
     .optional()
     .custom((value, { req }) => {
