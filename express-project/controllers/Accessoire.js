@@ -35,6 +35,7 @@ exports.getAllAccessoires = async (req, res) => {
         if (req.query.category) {
             query.categorie = req.query.category;
         }
+        //yfiltri bil prix lowla entre deux prix thenya min max
         if (req.query.priceMin && req.query.priceMax) {
             query.prix = { $gte: req.query.priceMin, $lte: req.query.priceMax };
         } else if (req.query.priceMin) {
@@ -42,7 +43,7 @@ exports.getAllAccessoires = async (req, res) => {
         } else if (req.query.priceMax) {
             query.prix = { $lte: req.query.priceMax };
         }
-
+        //bech ynathem ili jabo b order desc
         const sortOptions = {};
         if (req.query.sort) {
             const [sortBy, sortOrder] = req.query.sort.split(':');

@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const accessoireSchema = new mongoose.Schema({
     expediteur: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        //ref: 'User'
+        required: false,
+        ref: 'User'
     },
     description: {
         type: String,
