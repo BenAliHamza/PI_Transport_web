@@ -1,26 +1,39 @@
 var express = require('express');
-const {validateUser} = require("../middlewares/validators/userValidators");
-const User = require("../models/userModel");
-var router = express.Router();
+const {validateUserCreation, validateLogin} = require("../middlewares/validators/userValidators");
+const {
+  addUser,
+  loginUser,
+  getUserByType
+  ,
+  getUserById,
+  updateUser,
+  getUserByNumber,
+  deleteAllUsers,
+  getUserByEmail,
+  getUserByTypeForSimpleUser,
+  getAllUser,
+  getAdminAllUser,
+  deleteUserById,
+  activate_user
+} = require("../controllers/userController");
+const {verifyToken, verifyAdmin} = require("../middlewares/auth");
+const router = express.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+
+router
+  .post('/', validateUserCreation, addUser)
+  .post('/login', validateLogin, loginUser)
+  .post('/activate_account/:token', activate_user)
+  .get('/admin/filterby', verifyAdmin, getUserByType)
+  .get('/defaultUser/filterby', verifyToken, getUserByTypeForSimpleUser)
+  .get('/byId/:id', verifyToken, getUserById)
+  .get('/byPhone/:phone', verifyToken, getUserByNumber)
+  .get('/ByEmail/:email', verifyToken, getUserByEmail)
+  .get("/getall", verifyToken, getAllUser)
+  .get("/getallAdminUsers", verifyAdmin, getAdminAllUser)
+  .put('/updateById/:id', verifyToken, updateUser)
+  .delete("/delete/:id", verifyToken, deleteUserById)
+  .delete('/deleteall', verifyAdmin, deleteAllUsers);
 
 
-router.post('/'  ,validateUser , async (req, res, next)=>{
-    const body = req.body
-    try {
-    await  User.create(req.body)
-    }catch (e){
-      res.status(402).json({error: e});
-    }
-})
-
-router.get('/' , validateUser  , async (req, res, next)=>{
-return {
-  message : 'respond with a resource'
-}
-})
 module.exports = router;

@@ -7,10 +7,14 @@ require('dotenv').config()
 var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+<<<<<<< HEAD
 var reclamationRouter = require('./routes/Reclamation');
 var reponseRouter = require('./routes/Reponse');
 const Reponse = require('./models/Reponse');
 
+=======
+const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
+>>>>>>> main
 
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 var app = express();
@@ -31,6 +35,7 @@ app.use('/reponses', reponseRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
+<<<<<<< HEAD
 app.use(function(req, res, next) {
   next(createError(404));
 });
@@ -46,4 +51,9 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 app.listen(5000);
+=======
+app.use(notFoundError);
+app.use(errorHandler);
+
+>>>>>>> main
 module.exports = app;
