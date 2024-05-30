@@ -9,7 +9,7 @@
 </head>
 <body>
     <div style="width: 100%; padding: 1rem">
-      <h1 style="font-family: Cabin-Bold ,sans-serif; font-weight: bold" >Bonjour  <span style="text-transform: uppercase"><%= name%></span> </h1>
+      <h1 style="font-family: Cabin-Bold ,sans-serif; font-weight: bold" >Bonjour  <span style="text-transform: uppercase"> <%= name%></span> </h1>
       <br> <br>
 
       <h4 style="color: #4f48ec">Welcome to Co-Transport</h4> <br>
@@ -17,7 +17,11 @@
       <p>You have created on account related to the email :  <%= email%>, to activate  please  click in the link below : </p>
       <br> <br>
 
-      <p style="color: #213B8F">  <%= link%></p>
+      <p style="color: #213B8F">
+        <a href="<%= link %>">
+          <%= link %>
+        </a>
+      </p>
       <br> <br>
 
 
