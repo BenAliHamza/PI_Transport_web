@@ -7,6 +7,10 @@ require('dotenv').config()
 var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const annonceRouter = require('./routes/annonce');
+const reservationRouter = require('./routes/Reservation');
+require('./middlewares/LogicArchiveAnnonce');
+var connectionString = process.env.CONNECTION_STRING  ?? "mongodb://localhost:27017/Projet"
 const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
 
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
@@ -24,9 +28,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/annonce', annonceRouter);
+app.use('/reservation', reservationRouter);
 
 // catch 404 and forward to error handler
 app.use(notFoundError);
 app.use(errorHandler);
 
+
+app.listen(5000);
 module.exports = app;
