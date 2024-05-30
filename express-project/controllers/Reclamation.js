@@ -11,15 +11,49 @@ exports.createReclamation = async (req, res) => {
 };
 
 exports.getReclamations = async (req, res) => {
+//GET /reclamations?search=keyword
+//GET /reclamations?sortBy=createdAt:desc
+//GET /reclamations?startDate=2023-01-01&endDate=2023-12-31
+///reclamations?search=keyword&sortBy=createdAt:desc&startDate=2023-01-01&endDate=2023-12-31
+
     try {
-        const reclamations = await Reclamation.find().populate('expediteur');
+        const { search, sortBy, startDate, endDate } = req.query;
+        const match = {};
+        const sort = {};
+
+        if (search) {
+            match.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        if (startDate || endDate) {
+            match.createdAt = {};
+            if (startDate) {
+                match.createdAt.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                match.createdAt.$lte = new Date(endDate);
+            }
+        }
+
+        if (sortBy) {
+            const parts = sortBy.split(':');
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
+        }
+
+        const reclamations = await Reclamation.find(match)
+            .populate('expediteur')
+            .sort(sort);
+        
         res.send(reclamations);
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
-exports.getReclamation = async (req, res) => {
+exports.getReclamationById = async (req, res) => {
     try {
         const reclamation = await Reclamation.findById(req.params.id).populate('expediteur');
         if (!reclamation) {

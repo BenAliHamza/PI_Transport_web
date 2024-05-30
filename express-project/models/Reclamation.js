@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const reclamationSchema = new mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'User'
     },
     titre: {
