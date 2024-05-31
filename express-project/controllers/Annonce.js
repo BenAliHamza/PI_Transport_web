@@ -1,11 +1,12 @@
 const Annonce = require('../models/Annonce')
-
+const {sendAnnonceEmail  }  = require('../shared/services/transporter')
 
  const createAnnonce = async (req, res) => {
     try {
         let  annonce  =  req.body ;
       // Populate the user details
         const annonceCreated = await  Annonce.create({...annonce ,  user_Id : req.user._id });
+        await sendAnnonceEmail(req.user)
         res.status(201).json(annonceCreated)
     }catch (error){
         res.status(500).json({ message : 'Erreur lors de la creation de l\'annonce' , error : error.message})
