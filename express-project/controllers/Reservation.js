@@ -14,7 +14,7 @@ const createReservation = async (req, res) => {
         console.log(placedisponible);
         const reservation = new Reservation({
             ...req.body,
-
+            user: req.user._id
         })
        const createdReservation =  await Reservation.create(reservation) ;
         if(!createdReservation){

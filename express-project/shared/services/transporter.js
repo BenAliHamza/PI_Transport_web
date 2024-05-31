@@ -148,13 +148,13 @@ async function sendAnnonceEmail(user) {
 
     const templatePath = path.resolve(__dirname, '../email_templates/annoceEmail.html');
     const htmlContent = await ejs.renderFile(templatePath, {
-      name: "Oussama",
+      name: "Dridi ",
 
     });
 
     const mailOptions = {
       from: process.env.EMAIL,
-      to: "oussamadridi.etudiant@gmail.com ",
+      to: "dridi.oussama@esprit.tn ",
       subject: 'Confirmation Annonce',
       html: htmlContent,
     };
