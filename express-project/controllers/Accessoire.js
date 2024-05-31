@@ -1,4 +1,5 @@
 const Accessoire = require('../models/Accessoire');
+const CategorieFavorie = require('../models/CategorieFavorie');
 const CategorieAccessoire = require('../models/categorieAccessoire');
 const { sendNotificationEmail } = require('../shared/services/transporter');
 
@@ -25,7 +26,9 @@ exports.createAccessoire = async (req, res) => {
          });
         res.status(201).send(savedAccessoire);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send({
+            message:error.message
+        });
     }
 };
 
