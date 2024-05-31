@@ -7,17 +7,14 @@ require('dotenv').config()
 var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-<<<<<<< HEAD
 var reclamationRouter = require('./routes/Reclamation');
 var reponseRouter = require('./routes/Reponse');
 const Reponse = require('./models/Reponse');
 
-=======
 var accessoireRoutes = require('./routes/accessoireRoutes');
 const categorieFavorieRoutes = require('./routes/categorieFavorieRoutes');
 var categorieAccessoireRoutes = require('./routes/categorieAccessoireRoutes');
 const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
->>>>>>> main
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
