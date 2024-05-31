@@ -10,12 +10,22 @@ var usersRouter = require('./routes/users');
 var offreRouter = require("./routes/Offre");
 var vehiculeRoutes = require("./routes/vehicule")
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/PI"
+var reclamationRouter = require('./routes/Reclamation');
+var reponseRouter = require('./routes/Reponse');
+const Reponse = require('./models/Reponse');
+
+var accessoireRoutes = require('./routes/accessoireRoutes');
+const categorieFavorieRoutes = require('./routes/categorieFavorieRoutes');
+var categorieAccessoireRoutes = require('./routes/categorieAccessoireRoutes');
+const { notFoundError, errorHandler } = require("./middlewares/errorHandler");
+var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
 require('./middlewares/LogicArchiveAnnonce');
-const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
+const { notFoundError, errorHandler } = require("./middlewares/errorHandler");
 
-var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
+
+
 var app = express();
 
 
@@ -28,19 +38,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/accessoires', accessoireRoutes);
+app.use('/categories', categorieAccessoireRoutes);
 app.use('/', indexRouter);
 app.use('/offres', offreRouter)
 app.use('/users', usersRouter);
 app.use('/vehicules', vehiculeRoutes);
+app.use('/reclamations', reclamationRouter);
+app.use('/reponses', reponseRouter);
+app.use('/users', usersRouter);
+app.use('/categorie-favories', categorieFavorieRoutes);
 app.use('/annonce', annonceRouter);
 app.use('/reservation', reservationRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -57,6 +67,4 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(notFoundError);
 app.use(errorHandler);
 
-
-app.listen(5000);
-module.exports = app;
+module.exports = app

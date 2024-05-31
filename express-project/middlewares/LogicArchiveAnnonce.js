@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Annonce = require('../models/Annonce'); // Adjust the path as needed
 
 // Connect to MongoDB (adjust the connection string as needed)
-mongoose.connect('mongodb+srv://sayf:sayf123@cluster0.lnrhp.mongodb.net/ProjectTransport?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const archiveOldAnnonces = async () => {
     try {
