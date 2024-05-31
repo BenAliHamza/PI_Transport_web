@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
-<<<<<<< HEAD
-const {EMAIL_REGEX, PASSWORD_REGEX} = require("../shared/services/commonService");
-=======
 const {EMAIL_REGEX, PASSWORD_REGEX , ROLE_REGEX ,STATUS_REGEX} = require("../shared/services/commonService");
->>>>>>> main
 const { Schema } = mongoose;
 
 // user schema

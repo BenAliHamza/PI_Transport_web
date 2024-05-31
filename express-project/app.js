@@ -22,7 +22,6 @@ var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:270
 const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
 require('./middlewares/LogicArchiveAnnonce');
-const { notFoundError, errorHandler } = require("./middlewares/errorHandler");
 
 
 

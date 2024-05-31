@@ -1,5 +1,5 @@
 
-const { body, query } = require("express-validator")
+const { body, query , param} = require("express-validator")
 const AddVehiculeValidator = [
   body('marque').isString().withMessage('Marque must be a string'),
   body('model').isString().withMessage('Model must be a string'),
