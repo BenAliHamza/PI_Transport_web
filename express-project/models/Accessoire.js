@@ -1,27 +1,38 @@
 const mongoose = require('mongoose');
 
-const accessoire_schema = mongoose.Schema({
-    expediteur:{
+const accessoireSchema = new mongoose.Schema({
+    expediteur: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'User'
     },
-    description:{
+    description: {
         type: String,
         required: true,
         default: ""
     },
     titre: {
         type: String,
-        required: true
+        required: true,
+        default: ""
     },
-    prix: 
-    { type: Number, min: 0 },
+    prix: {
+        type: Number,
+        min: 0
+    },
     etat: {
         type: String,
-        enum : ["Vendue",'Disponible'],
+        enum: ["Vendue", "Disponible"],
         default: "Disponible"
+    },
+    categorie: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CategorieAccessoire',
+        required: true,
+        default : ""
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Accessoire', accessoire_schema);
+const Accessoire = mongoose.models.Accessoire || mongoose.model('Accessoire', accessoireSchema);
+
+module.exports = Accessoire;
