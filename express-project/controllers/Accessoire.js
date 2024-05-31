@@ -1,5 +1,6 @@
 const Accessoire = require('../models/Accessoire');
 const CategorieAccessoire = require('../models/categorieAccessoire');
+const { sendNotificationEmail } = require('../shared/services/transporter');
 
 // Create Accessoire
 exports.createAccessoire = async (req, res) => {
@@ -12,6 +13,16 @@ exports.createAccessoire = async (req, res) => {
     }
     try {
         const savedAccessoire = await accessoire.save();
+
+         // Find users with this category as their favorite
+         const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
+
+         // Send emails to those users
+         favoriteUsers.forEach(async fav => {
+             const user = fav.user;
+             const emailText = `Hi ${user.firstname}, a new accessory in your favorite category has been added: ${accessoire.titre}.`;
+             await sendNotificationEmail(user.email, 'New Accessory Added', emailText);
+         });
         res.status(201).send(savedAccessoire);
     } catch (error) {
         res.status(400).send(error);
@@ -95,6 +106,20 @@ exports.deleteAccessoire = async (req, res) => {
         const accessoire = await Accessoire.findByIdAndDelete(req.params.id);
         if (!accessoire) return res.status(404).send();
         res.status(200).send(accessoire);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+// Test Email Function
+exports.email = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).send("User not authenticated");
+        }
+
+        const user = { email: req.user.email, firstname: req.user.firstname };
+        await sendNotificationEmail(user.email, "New Accessory Added", "A new accessory has been added to your favorite category.");
+        res.status(200).send("Notification sent");
     } catch (error) {
         res.status(500).send(error);
     }
