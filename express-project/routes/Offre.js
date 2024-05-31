@@ -5,6 +5,21 @@ const Offre = require('../models/Offre'); // Adjust the path as needed
 const { AddOffreValidator, UpdateOffreValidator, GetOffresValidator, GetOffreValidator } = require('../validators/Offre')
 const { verifyToken } = require("./../middlewares/auth");
 const { AddOffreController, GetOffreController, GetOffresController, UpdateOffreController } = require("./../controllers/Offre");
+
+
+
+const checkVehiculeExists = async (req, res, next) => {
+  const vehiculeId = req.body.vehicule || req.query.vehicule || req.params.vehicule;
+  if (vehiculeId) {
+    const exists = await User.findById(vehiculeId);
+    if (!exists) {
+      return res.status(404).json({ error: 'Proprietaire not found' });
+    }
+  }
+  next();
+}
+
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -13,6 +28,7 @@ const validate = (req, res, next) => {
   next();
 };
 
+router.post('/', AddOffreValidator, checkVehiculeExists,validate, AddOffreController);
 
 router.post(
   '/',
@@ -26,8 +42,8 @@ router.patch(
   '/:id',
   UpdateOffreValidator
   ,
-  verifyToken,
   validate,
+  verifyToken,
   UpdateOffreController
 );
 

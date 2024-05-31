@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Offre = require("../models/Offre");
+const Vehicule = require("../models/Vehicule");
 
 const AddOffreController = async (req, res) => {
   try {
@@ -76,6 +77,13 @@ const UpdateOffreController = async (req, res) => {
     }
     if (!offer) {
       return res.status(404).send({ error: 'Offer not found' });
+    }
+
+    if (!req.vehicule) {
+      var vehicule = await Vehicule.findById(vehicule);
+      if(!vehicule){
+        return res.status(400).send({ error: 'Vehicule not found' });
+      }
     }
     const updateoffer = await Offre.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
