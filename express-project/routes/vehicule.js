@@ -3,8 +3,8 @@ const express = require('express');
 const { body, param, query, validationResult } = require('express-validator');
 const Vehicule = require('../models/Vehicule');
 const User = require('../models/User');
-const { AddVehiculeValidator, GetVehiculesValidator } = require('../validators/Vehicule');
-const { DeleteVehiculeController , AddVehiculeController, GetVehiculesController, GetVehiculeController } = require('../controllers/Vehicule');
+const { AddVehiculeValidator, GetVehiculesValidator , UpdateVehiculeValidator} = require('../validators/Vehicule');
+const { DeleteVehiculeController , AddVehiculeController, GetVehiculesController, GetVehiculeController, UpdateVehiculeController } = require('../controllers/Vehicule');
 const { verifyToken } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -30,4 +30,5 @@ router.get('/:id', [
   param('id').isMongoId().withMessage('Invalid vehicule ID')
 ], validate , GetVehiculeController);
 
+router.patch('/:id', UpdateVehiculeValidator , validate, verifyToken, UpdateVehiculeController);
 module.exports = router;

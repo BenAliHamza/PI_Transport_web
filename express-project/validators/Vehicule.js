@@ -12,4 +12,11 @@ const GetVehiculesValidator =  [
   query('model').optional().isString(),
   query('places').optional().isInt({ min: 1 })
 ]
-module.exports = {AddVehiculeValidator, GetVehiculesValidator}
+
+const UpdateVehiculeValidator = [
+  param('id').isMongoId().withMessage('Invalid vehicule ID'),
+  body('marque').optional().isString().withMessage('Marque must be a string'),
+  body('model').optional().isString().withMessage('Model must be a string'),
+  body('places').optional().isInt({ min: 1 }).withMessage('Places must be at least 1')
+]
+module.exports = {AddVehiculeValidator, GetVehiculesValidator, UpdateVehiculeValidator}
