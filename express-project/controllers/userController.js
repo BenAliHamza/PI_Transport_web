@@ -1,7 +1,7 @@
 const User = require("../models/User") ;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { sendActivationEmail }  = require('../shared/services/transporter')
+const { sendActivationEmail, sendResetEmail}  = require('../shared/services/transporter')
 require('dotenv').config()
 
 function isConnectedOrAdmin(req, userId) {
@@ -26,7 +26,7 @@ function isAdmin(user){
          const confirmation_link = await sendActivationEmail(newUser);
         return  res.status(200).json({
            confirmation_link,
-           message: "New user has been created !!!",
+           message: "New user has been created !!!, an EMAIL has been sent for verification and validation of the account",
            user: newUser
          })
        }
@@ -58,7 +58,6 @@ function isAdmin(user){
    return  res.status(400).json({ message: 'Invalid request  or expired token' });
   }
 }
-
 async function loginUser(req, res) {
      try {
        const {email, password} = req.body;
@@ -274,6 +273,129 @@ async function updateUser(req, res) {
     })
   }
 }
+async function changePassword(req , res ){
+  try{
+    const { password, newPassword ,id} = req.body;
+    const userId = req.user._id; // Assuming the user ID is available in req.user
+    if (!password || !newPassword || !id) {
+      return res.status(400).json({ message: 'Old password / new password and user ID are required' });
+    }
+    const user = await User.findById(id);
+    if (!user ) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Log the user ID and types for debugging
+    if(user._id.toString() !== userId.toString()){
+      return res.status(404).json({ message: 'You are not allowed to change password' });
+    }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'The old password is incorrect' });
+    }
+    if(!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(newPassword))){
+      return res.status(403).json({ message: 'Password must match specifications !!!' });
+    }
+    user.password = await bcrypt.hash(newPassword, Number(process.env.SALT));
+    await user.save();
+    res.status(200).json({ message: 'Password updated successfully' });
+  }catch (e){
+    res.status(500).json({ message: 'Server error', error: e });
+  }
+}
+async function banFunction(req, res){
+  try {
+    const { id , type } = req.params;
+    let user ;
+    if( !id || !type){
+      return res.status(403).json({ message: 'Missing informations needed ID and type' });
+    }
+    if( type === 'BAN' ){
+     user =   await User.findByIdAndUpdate(id , {
+        status : "BANNED"
+      }, {new: true})
+    }else {
+     user =  await  User.findByIdAndUpdate(id , {
+        status : "APPROVED"
+      } , {new: true});
+    }
+    res.status(200).json({ message: `User ${user.status =="APPROVED"? "UNBANNED": "BANNED"} successfully` , user});
 
- module.exports = {updateUser ,  addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
+  }catch (e){
+    res.status(500).json({ message: 'Server error', error: e });
+  }
+}
+async function forgetPassword(req, res){
+  try{
+    const email = req.body.email ;
+    console.log(email)
+    if(!email) {
+      return res.status(404).json({
+        message : "User email is required !!! "
+      })
+    }
+    const user = await User.findOne({email:email});
+    if(!user){
+      return res.status(404).json({
+        message : "User email is incorrect !!! "
+      })
+    }
+    const resetCode = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+    // Call the function to send the reset email
+   const resetlink =  await sendResetEmail(user, resetCode);
+
+    res.status(200).json({
+      message: "Reset email sent successfully." ,
+      confirmationLink : resetlink
+    });
+  }catch(err){
+    res.status(500).json({
+      message : err.message
+    })
+  }
+}
+async function verifyResetCode(req, res) {
+  try {
+    const { newPassword } = req.body;
+    const {token} = req.params ;
+    if(!newPassword ){
+      return res.status(403).json({
+        message : "Password is required !!!"
+      })
+    }
+    if( !(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(newPassword))){
+      return  res.status(403).json({
+        messge : "Password must match specifications !!!"
+      })
+    }
+    console.log(token)
+    console.log(newPassword)
+    // Verify the reset code using JWT
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.userId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid reset code."
+      });
+    }
+
+    // Hash the new password
+    // Update the user's password
+    user.password = await bcrypt.hash(newPassword, Number(process.env.SALT));
+    await user.save();
+
+    res.status(200).json({
+      message: "Password reset successfully."
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    });
+  }
+}
+
+ module.exports = {forgetPassword , verifyResetCode , updateUser ,banFunction , changePassword , addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
