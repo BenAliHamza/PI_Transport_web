@@ -12,30 +12,30 @@ const { verifyToken } = require('../middlewares/auth');
  
 // Route pour créer une réservation
 
-router.post('/',verifyToken, createReservation); // à ajouter :offreID
+router.post('/', createReservation); // à ajouter :offreID
  
 // Route pour obtenir toutes les réservations d'un utilisateur
 
-router.get('/',verifyToken, getAllReservationsByUser);// :userId
+router.get('/', getAllReservationsByUser);// :userId
 
 
-router.get('/filter',verifyToken, getAllReservationsByFilter); // :userId
+router.get('/filter', getAllReservationsByFilter); // :userId
  
 // Route pour mettre à jour une réservation
 
-router.put('/:id',verifyToken, updateReservation);
+router.put('/:id', updateReservation);
  
 // Route pour supprimer une réservation
 
-router.delete('/:id',verifyToken, deleteReservation);
+router.delete('/:id', deleteReservation);
  
 // Route pour accepter une réservation
 
-router.put('/accept/:id',verifyToken, acceptReservation);
+router.put('/accept/:id', acceptReservation);
  
 // Route pour refuser une réservation
 
-router.put('/refuse/:id', verifyToken,refuseReservation);
+router.put('/refuse/:id', refuseReservation);
  
 // Exportation du routeur
 

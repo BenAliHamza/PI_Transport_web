@@ -2,12 +2,13 @@
 const Reservation = require('../models/Reservation');
 const Offre = require("./../models/Offre");
 const Vehicule = require("../models/Vehicule")
+const {sendReservationEmail  }  = require('../shared/services/transporter')
  
 // Fonction pour créer une réservation
 const createReservation = async (req, res) => {
     try {
         var placedisponible = await calculplacedisponible(req.body.offre)
-        const userId = req.user._id;
+        //const userId = req.user._id;
         if(placedisponible < req.body.places)
             return res.status(500).json({ message : 'Erreur lors de la création de la réservation', error : "nb de places insuffusants" })
         console.log(placedisponible);
@@ -16,6 +17,7 @@ const createReservation = async (req, res) => {
             
         })
         await reservation.save()
+        await sendReservationEmail(req.user)
         res.status(201).json(reservation)
     } catch (error) {
         res.status(500).json({ message : 'Erreur lors de la création de la réservation', error : error.message })
