@@ -21,7 +21,7 @@ async function verifyAdmin(req, res, next) {
     // Check if user exists
     const user = await Users.findById(decoded.id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'there is an issue with the connected user !!!' });
     }
     // Attach user object to request
     req.user = user;
@@ -68,7 +68,7 @@ async function verifyToken(req, res, next) {
     // Check if user exists
     const user = await Users.findById(decoded.id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found or token is Invalid' });
     }
 
     // Attach user object to request
