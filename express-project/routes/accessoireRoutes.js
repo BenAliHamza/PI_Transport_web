@@ -7,9 +7,9 @@ const {verifyToken} = require("../middlewares/auth");
 const router = express.Router();
 //
 router.post('/',verifyToken, accessoireController.createAccessoire);
-router.get('/', /*auth.verifyToken,*/accessoireController.getAllAccessoires);
-router.get('/:id',/* auth.verifyToken,*/accessoireController.getAccessoireById);
-router.patch('/:id', /*auth.verifyToken,*/accessoireController.updateAccessoire);
-router.delete('/:id', /*auth.verifyToken,*/accessoireController.deleteAccessoire);
+router.get('/',verifyToken,accessoireController.getAllAccessoires);
+router.get('/:id',verifyToken,accessoireController.getAccessoireById);
+router.patch('/:id',verifyToken,accessoireController.updateAccessoire);
+router.delete('/:id',verifyToken,accessoireController.deleteAccessoire);
 
 module.exports = router;
