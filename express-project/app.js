@@ -13,7 +13,7 @@ require('./middlewares/LogicArchiveAnnonce');
 var connectionString = process.env.CONNECTION_STRING  ?? "mongodb://localhost:27017/Projet"
 const {notFoundError, errorHandler} = require("./middlewares/errorHandler");
 
-var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
+
 var app = express();
 mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
 

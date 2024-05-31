@@ -2,36 +2,42 @@ const mongoose = require('mongoose')
 
 // Adresse { region , ville }
 const AddresseSchema = new mongoose.Schema({
-    region:String,
-    ville : String
+  ville: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  }
 })
 
 const annonce_schema = new mongoose.Schema({
-    User :{
+    user_Id :{
         type: mongoose.Schema.Types.ObjectId,
-        //required: true,
+        required: true,
         ref: 'User'
     },
     titre: {
         type: String,
-        //required: true
+        required: true
     },
     lieu_depart: {// Addresse
         type: AddresseSchema,
-       // required: true
+       required: true
     },
     lieu_arrive: {// Addresse
         type: AddresseSchema,
-        //required: true
+        required: true
     },
     heure_depart: {
         type: Date,
-        //required: true
+      default: new Date(),
     },
     type: {
         type: String,
         enum : ["Co-Voiturage",'Livraison',"Taxi"],
-        //required: true
+        required: true
     },
     status: {
         type: String,
