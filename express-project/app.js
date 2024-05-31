@@ -43,12 +43,16 @@ app.use('/', indexRouter);
 app.use('/offres', offreRouter)
 app.use('/users', usersRouter);
 app.use('/vehicules', vehiculeRoutes);
-app.use('/reclamations', reclamationRouter);
-app.use('/reponses', reponseRouter);
+
 app.use('/users', usersRouter);
 app.use('/categorie-favories', categorieFavorieRoutes);
 app.use('/annonce', annonceRouter);
 app.use('/reservation', reservationRouter);
+
+// hFAYEDH
+app.use('/reclamations', reclamationRouter);
+app.use('/reponses', reponseRouter);
+
 
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
@@ -61,7 +65,7 @@ app.use(function (err, req, res, next) {
 });
 if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(connectionString).then(() => console.log("Connection Successful"));
-  app.listen(5000)
+  app.listen(3000)
 }
 app.use(notFoundError);
 app.use(errorHandler);

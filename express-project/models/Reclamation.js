@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const reclamationSchema = new mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
-        required: false,
+        required: true,
         ref: 'User'
     },
     titre: {
@@ -21,7 +21,7 @@ const reclamationSchema = new mongoose.Schema({
     },
     etat: {
         type: String,
-        enum : ["En attente","Traiter"],
+          enum : ["En attente","Traiter"],
         default:"En attente",
     }
 
