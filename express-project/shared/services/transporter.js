@@ -280,4 +280,4 @@ async function sendResetEmail(user, resetCode){
   }
 }
 
-module.exports = { sendNotificationEmail,sendActivationEmail ,sendReservationEmail, sendAnnonceEmail};
+module.exports = { sendNotificationEmail,sendActivationEmail ,sendReservationEmail, sendResetEmail, sendAnnonceEmail};
