@@ -3,7 +3,7 @@ const Reservation = require('../models/Reservation');
 const Offre = require("./../models/Offre");
 const Vehicule = require("../models/Vehicule")
 const {sendReservationEmail  }  = require('../shared/services/transporter')
- 
+
 // Fonction pour créer une réservation
 const createReservation = async (req, res) => {
     try {
@@ -14,9 +14,14 @@ const createReservation = async (req, res) => {
         console.log(placedisponible);
         const reservation = new Reservation({
             ...req.body,
-            
+
         })
-        await reservation.save()
+       const createdReservation =  await Reservation.create(reservation) ;
+        if(!createdReservation){
+          return  res.status(404).json({
+            message : "issue during creating reservation "
+          })
+        }
         await sendReservationEmail(req.user)
         res.status(201).json(reservation)
     } catch (error) {
@@ -84,13 +89,26 @@ const refuseReservation = async (req, res) => {
     }
 };
 const calculplacedisponible = async (idoffre)=> {
-    const  offre = await Offre.findById(idoffre).populate("vehicule");
-    var reservation_offre = await Reservation.find({offre : offre._id});
-    var reserved_places =  reservation_offre.reduce((totale, res) => totale + res.places, 0);
-    return offre.vehicule.places - reserved_places
-           
+  try {
+    // Find the offer by ID and populate the 'vehicule' field
+    const offre = await Offre.findById(idoffre).populate("vehicule");
+    if (!offre) {
+      throw new Error('Offre not found');
+    }
+    // Find all reservations for the given offer
+    const reservation_offre = await Reservation.find({ offre: offre._id });
+
+    // Calculate the total reserved places
+    const reserved_places = reservation_offre.reduce((total, res) => total + res.places, 0);
+    // Return the available places
+    return offre.vehicule.places - reserved_places;
+  } catch (error) {
+    console.error('Error calculating available places:', error);
+    throw error;  // Rethrow the error for the caller to handle
+  }
+
 }
- 
+
 // Exportation de la fonction
 module.exports = {
     createReservation,
