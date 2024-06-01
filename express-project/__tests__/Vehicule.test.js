@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Offre = require('../models/Offre');
 const Vehicule = require('../models/Vehicule');
 const jwt = require('jsonwebtoken');
-const CategorieAccessoire = require('./models/categorieAccessoire');
+const CategorieAccessoire = require('./models/categorieAccessoire.js');
 describe('Vehicule Routes', () => {
     let vehiculeId1,vehiculeId2;
 
