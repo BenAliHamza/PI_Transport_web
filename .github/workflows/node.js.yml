@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" , "offre_seif" ]
+    branches: [ "main" , "offre_seif", "offre_branch_fix" ]
   pull_request:
     branches: [ "main", "offre_seif" ]
 
