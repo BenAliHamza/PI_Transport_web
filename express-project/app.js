@@ -13,8 +13,8 @@ var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:270
 var reclamationRouter = require('./routes/Reclamation');
 var reponseRouter = require('./routes/Reponse');
 const Reponse = require('./models/Reponse');
-const CategorieAccessoire = require('./models/categorieAccessoire');
-const CategorieFavorie = require('./models/CategorieFavorie');
+const CategorieAccessoire = require('./models/categorieAccessoire.js');
+const CategorieFavorie = require('./models/CategorieFavorie.js');
 
 var accessoireRoutes = require('./routes/accessoireRoutes');
 const categorieFavorieRoutes = require('./routes/categorieFavorieRoutes');
