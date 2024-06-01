@@ -211,6 +211,7 @@ async  function getAdminAllUser(req ,res){
     res.status(500).json({ error: e.message });
   }
 }
+
 async function deleteUserById(req, res){
   try {
     const userIdToDelete = req.params.id;

@@ -5,15 +5,17 @@ const { sendNotificationEmail } = require('../shared/services/transporter');
 
 // Create Accessoire
 exports.createAccessoire = async (req, res) => {
-    const accessoire = new Accessoire(req.body);
-    if (!req.body.expediteur || !req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
+    const accessoire = req.body
+    if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
         return res.status(400).send("Veuillez remplir tous les champs");
     }
     if (typeof req.body.prix !== 'number' || req.body.prix < 0) {
         return res.status(400).send("Prix doit etre positive");
     }
     try {
-        const savedAccessoire = await accessoire.save();
+        const savedAccessoire = await Accessoire.create({
+          ...accessoire , expediteur : req.user._id
+        });
 
          // Find users with this category as their favorite
          const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
