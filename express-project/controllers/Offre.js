@@ -75,6 +75,7 @@ const GetOffresController = async (req, res, next) => {
 const UpdateOffreController = async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['titre', 'lieu_depart', 'lieu_arrive', 'heure_depart', 'type', 'vehicule'];
+
   const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
   if (!isValidOperation) {
@@ -97,8 +98,8 @@ const UpdateOffreController = async (req, res) => {
       }
     }
     const updateoffer = await Offre.findByIdAndUpdate(req.params.id, req.body);
-
-    res.send(updateoffer);
+    const updatedOffer = await Offre.findById(offer._id);
+    res.send(updatedOffer);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
@@ -113,8 +114,8 @@ const DeleteOffreController = async (req, res) => {
     if (!offre) {
       return res.status(404).json({ message: 'Offer not found' });
     }
-
-    if(!offre.expediteur != req.user._id && req.user.role != "ADMIN")
+  console.log(req.user.role);
+    if(offre.expediteur.toString() != req.user._id && req.user.role != "ADMIN")
       {
         return res.status(401).json({ message: 'Unauthorized To Make This Operation' });
 
