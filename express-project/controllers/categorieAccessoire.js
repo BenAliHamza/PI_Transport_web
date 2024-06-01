@@ -1,5 +1,3 @@
-const CategorieAccessoire = require('../models/categorieAccessoire');
-
 
 // Create Category
 exports.createCategory = async (req, res) => {
