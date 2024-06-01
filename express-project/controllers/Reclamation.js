@@ -1,4 +1,5 @@
 const Reclamation = require('../models/Reclamation');
+const {sendReclamationEmail} = require("../shared/services/transporter");
 
 exports.createReclamation = async (req, res) => {
     try {
@@ -11,6 +12,7 @@ exports.createReclamation = async (req, res) => {
             message : 'Erreur lors de la creation de la reclamation'
           })
         }
+         await  sendReclamationEmail(userConnected , newReclamation.titre)
          res.status(201).send({
            message : "Reclamation has been created successfully",
            newReclamation : newReclamation

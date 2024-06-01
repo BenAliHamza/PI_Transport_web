@@ -202,8 +202,6 @@ async function sendResetEmail(user, resetCode){
     console.error('Error sending activation email:', error);
   }
 }
-
-
 async function SendSubscriptionEmail(user,offre,subscription) {
   try {
     const access = await oAuth_client.getAccessToken();
@@ -240,5 +238,70 @@ async function SendSubscriptionEmail(user,offre,subscription) {
     console.error('Error sending subscription email:', error);
   }
 }
+async function sendReclamationEmail(user , reclamation){
+  try {
+    const access = await oAuth_client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Use 'gmail' for Gmail SMTP
+      auth: {
+        type: 'OAuth2',
+        user: 'espritcotransport@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: access,
+      }
+    });
 
-module.exports = { sendNotificationEmail,sendActivationEmail , SendSubscriptionEmail,sendReservationEmail, sendAnnonceEmail , sendResetEmail};
+    const templatePath = path.resolve(__dirname, '../email_templates/reclamation.html');
+    const htmlContent = await ejs.renderFile(templatePath, {
+      name: user.firstname,
+      reclamation : reclamation
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: user.email,
+      subject: 'Reclamation',
+      html: htmlContent,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Reclamation email sent to ${user.email}`);
+  } catch (error) {
+    console.error('Error sending subscription email:', error);
+  }
+}
+async function sendResponseEmail(user , response){
+  try {
+    const access = await oAuth_client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Use 'gmail' for Gmail SMTP
+      auth: {
+        type: 'OAuth2',
+        user: 'espritcotransport@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: access,
+      }
+    });
+
+    const templatePath = path.resolve(__dirname, '../email_templates/response.html');
+    const htmlContent = await ejs.renderFile(templatePath, {
+      name: user.firstname,
+      response : response
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: user.email,
+      subject: 'Retour sur Reclamation',
+      html: htmlContent,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Reclamation email sent to ${user.email}`);
+  } catch (error) {
+    console.error('Error sending subscription email:', error);
+  }
+}
+module.exports = {sendResponseEmail,  sendNotificationEmail,sendActivationEmail , SendSubscriptionEmail,sendReservationEmail, sendAnnonceEmail , sendResetEmail , sendReclamationEmail};
