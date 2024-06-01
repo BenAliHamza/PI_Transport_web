@@ -26,32 +26,43 @@ const GetOffreController = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 }
-
+const ConsulterOffresController = async (req, res) => {
+  const _id = req.user._id;
+  try {
+    const offer = await Offre.find({expediteur : _id });
+    if (!offer) {
+      return res.status(404).send({ error: 'Offer not found' });
+    }
+    res.status(200).send(offer);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
 const GetOffresController = async (req, res, next) => {
 
-  const filter = {};
+  const { heure_depart, ville_depart, adresse_depart, ville_arrive, adresse_arrive, type } = req.query;
 
-  if (req.query.expediteur) {
-    filter.expediteur = req.query.expediteur;
-  }
-  if (req.query.titre) {
-    filter.titre = new RegExp(req.query.titre, 'i');
-  }
-  if (req.query.lieu_depart) {
-    filter.lieu_depart = new RegExp(req.query.lieu_depart, 'i');
-  }
-  if (req.query.lieu_arrive) {
-    filter.lieu_arrive = new RegExp(req.query.lieu_arrive, 'i');
-  }
-  if (req.query.heure_depart) {
-    filter.heure_depart = { $gte: req.query.heure_depart };
-  }
-  if (req.query.type) {
-    filter.type = req.query.type;
-  }
-  if (req.query.vehicule) {
-    filter.vehicule = req.query.vehicule;
-  }
+    const filter = {};
+
+    if (ville_depart) {
+      filter['lieu_depart.ville'] = new RegExp(ville_depart, 'i');
+    }
+    if (adresse_depart) {
+      filter['lieu_depart.adresse'] = new RegExp(adresse_depart, 'i');
+    }
+    if (ville_arrive) {
+      filter['lieu_arrive.ville'] = new RegExp(ville_arrive, 'i');
+    }
+    if (adresse_arrive) {
+      filter['lieu_arrive.adresse'] = new RegExp(adresse_arrive, 'i');
+    }
+
+    if (req.query.heure_depart) {
+      filter.heure_depart = { $gte: heure_depart };
+    }
+    if (type) {
+      filter.type = type;
+    }
 
   try {
     const offres = await Offre.find(filter);
@@ -71,21 +82,21 @@ const UpdateOffreController = async (req, res) => {
   }
 
   try {
-    const offer = await Offre.findById(req.params.id).populate("expediteur");
-    if (offer.expediteur._id != req.user._id) {
+    const offer = await Offre.findById(req.params.id);
+    if (offer.expediteur.toString() != req.user._id.toString() && req.user.role != "ADMIN") {
       return res.status(401).send({ error: 'You Can\'t update this offer' });
     }
     if (!offer) {
       return res.status(404).send({ error: 'Offer not found' });
     }
 
-    if (!req.vehicule) {
+    if (req.vehicule) {
       var vehicule = await Vehicule.findById(vehicule);
       if(!vehicule){
         return res.status(400).send({ error: 'Vehicule not found' });
       }
     }
-    const updateoffer = await Offre.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updateoffer = await Offre.findByIdAndUpdate(req.params.id, req.body);
 
     res.send(updateoffer);
   } catch (error) {
@@ -93,4 +104,30 @@ const UpdateOffreController = async (req, res) => {
   }
 }
 
-module.exports = { AddOffreController, GetOffreController, GetOffresController, UpdateOffreController };
+
+const DeleteOffreController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const offre = await Offre.findById(id);
+    if (!offre) {
+      return res.status(404).json({ message: 'Offer not found' });
+    }
+
+    if(!offre.expediteur != req.user._id && req.user.role != "ADMIN")
+      {
+        return res.status(401).json({ message: 'Unauthorized To Make This Operation' });
+
+      }
+
+    await Offre.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Offer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+
+module.exports = { AddOffreController, GetOffreController, GetOffresController, ConsulterOffresController ,DeleteOffreController, UpdateOffreController };

@@ -21,6 +21,7 @@ const { notFoundError, errorHandler } = require("./middlewares/errorHandler");
 var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:27017/Projet"
 const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
+const subscriptionRouter = require("./routes/Subscription")
 require('./middlewares/LogicArchiveAnnonce');
 
 
@@ -43,7 +44,7 @@ app.use('/', indexRouter);
 app.use('/offres', offreRouter)
 app.use('/users', usersRouter);
 app.use('/vehicules', vehiculeRoutes);
-
+app.use('/subscriptions', subscriptionRouter);
 app.use('/users', usersRouter);
 app.use('/categorie-favories', categorieFavorieRoutes);
 app.use('/annonce', annonceRouter);

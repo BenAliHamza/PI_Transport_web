@@ -77,6 +77,9 @@ const DeleteVehiculeController = async (req, res) => {
     if (!vehicule) {
       return res.status(404).json({ error: 'Vehicule not found' });
     }
+    if (vehicule.proprietaire.toString() != req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
     res.status(200).json({ message: 'Vehicule deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });

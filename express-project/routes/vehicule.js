@@ -3,7 +3,7 @@ const express = require('express');
 const { body, param, query, validationResult } = require('express-validator');
 const Vehicule = require('../models/Vehicule');
 const User = require('../models/User');
-const { AddVehiculeValidator, GetVehiculesValidator , UpdateVehiculeValidator} = require('../validators/Vehicule');
+const { AddVehiculeValidator, GetVehiculesValidator , UpdateVehiculeValidator} = require('../middlewares/validators/Vehicule');
 const { DeleteVehiculeController , AddVehiculeController, GetVehiculesController, GetVehiculeController, UpdateVehiculeController } = require('../controllers/Vehicule');
 const { verifyToken } = require('../middlewares/auth');
 
@@ -21,7 +21,7 @@ router.post('/', AddVehiculeValidator, verifyToken,validate, AddVehiculeControll
 
 router.delete('/:id', [
   param('id').isMongoId().withMessage('Invalid vehicule ID')
-],validate,
+],validate,verifyToken,
 DeleteVehiculeController);
 
 router.get('/',GetVehiculesValidator,validate, verifyToken, GetVehiculesController);

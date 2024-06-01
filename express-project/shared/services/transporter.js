@@ -203,4 +203,42 @@ async function sendResetEmail(user, resetCode){
   }
 }
 
-module.exports = { sendNotificationEmail,sendActivationEmail ,sendReservationEmail, sendAnnonceEmail , sendResetEmail};
+
+async function SendSubscriptionEmail(user,offre,subscription) {
+  try {
+    const access = await oAuth_client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Use 'gmail' for Gmail SMTP
+      auth: {
+        type: 'OAuth2',
+        user: 'espritcotransport@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: access,
+      }
+    });
+
+   const templatePath = path.resolve(__dirname, '../email_templates/SubscriptionMail.html');
+    const htmlContent = await ejs.renderFile(templatePath, {
+      topic: subscription.topic,
+      title: offre.titre,
+      name: user.name
+         });
+
+         console.log(user);
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: user.email,
+      subject: 'Subscription Updates',
+      html: htmlContent,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Activation email sent to ${user.email}`);
+  } catch (error) {
+    console.error('Error sending subscription email:', error);
+  }
+}
+
+module.exports = { sendNotificationEmail,sendActivationEmail , SendSubscriptionEmail,sendReservationEmail, sendAnnonceEmail , sendResetEmail};

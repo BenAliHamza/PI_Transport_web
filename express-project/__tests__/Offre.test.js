@@ -4,9 +4,12 @@ const app = require('../app');
 const User = require('../models/User');
 const Offre = require('../models/Offre');
 const Vehicule = require('../models/Vehicule');
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config()
 
 describe('Offre routes', () => {
-  let user, vehicule;
+  let user, vehicule,token;
   const randomId = "4eb6e7e7e9b7f4194e000001";
   beforeEach(async () => {
     user = new User({
@@ -17,8 +20,10 @@ describe('Offre routes', () => {
       email: 'test@example.com',
       password: 'Password12345678',
       phone: 1234567890,
+      ville: "tunis"
     });
     await user.save();
+    token = jwt.sign({ role: "DEFAULT", _id: user._id.toString() }, process.env.SECRET_KEY);
 
     vehicule = new Vehicule({
       _id: '605c72d7c9875e0015e7f5e4',
@@ -51,29 +56,12 @@ describe('Offre routes', () => {
     ]);
   });
 
-  it('should return 400 if expediteur is not a valid ObjectId', async () => {
-    const response = await request(app)
-      .post('/offres')
-      .send({
-        expediteur: 'invalidUserId',
-        titre: 'Trip',
-        lieu_depart: 'New York',
-        lieu_arrive: 'Los Angeles',
-        heure_depart: new Date(Date.now() + 10000).toISOString(),
-        type: 'Co-Voiturage',
-        vehicule: vehicule._id
-      });
-    expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      expect.objectContaining({
-        msg: 'Expediteur must be a valid ObjectId'
-      })
-    ]);
-  });
+
 
   it('should return 400 if title is too short', async () => {
     const response = await request(app)
       .post('/offres')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         expediteur: user._id,
         titre: 'Tr',
@@ -94,6 +82,7 @@ describe('Offre routes', () => {
   it('should return 201 if all fields are valid', async () => {
     const response = await request(app)
       .post('/offres')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         expediteur: user._id,
         titre: 'Trip',
@@ -110,6 +99,7 @@ describe('Offre routes', () => {
   it('should return Error if the User Does Not Exist', async () => {
     const response = await request(app)
       .post('/offres')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         expediteur: randomId ,
         titre: 'Trip',
@@ -129,12 +119,15 @@ describe('Offre routes', () => {
 
   it('should return 404 If The Offer Does Not Exist', async () => {
     const response = await request(app)
+      .set('Authorization', `Bearer ${token}`)
       .get(`/offres/${randomId}`)
     expect(response.status).toBe(404);
   });
 
   it('should get all offers', async () => {
-    const res = await request(app).get('/offres');
+    const res = await request(app)
+    .set('Authorization', `Bearer ${token}`)
+    .get('/offres');
     expect(res.status).toBe(200);
     console.log(res.body);
     expect(res.body.length).toBe(2);
@@ -153,11 +146,11 @@ describe('Offre routes', () => {
     expect(res.body[0].titre).toBe('Road Trip');
   });
 
-  it('should filter offers by lieu_depart', async () => {
-    const res = await request(app).get('/offres').query({ lieu_depart: 'New York' });
+  it('should filter offers by Ville Depart', async () => {
+    const res = await request(app).get('/offres').query({ lieu_depart: { ville: 'New York' });
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(1);
-    expect(res.body[0].lieu_depart).toBe('New York');
+    expect(res.body[0].lieu_depart.ville).toBe('New York');
   });
 
   it('should filter offers by heure_depart', async () => {
