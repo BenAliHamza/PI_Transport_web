@@ -7,6 +7,6 @@ const categorieAccessoireSchema = new mongoose.Schema({
     majLe: { type: Date, default: Date.now }
 });
 
-const CategorieAccessoire = mongoose.models.CategorieAccessoire || mongoose.model('CategorieAccessoire', categorieAccessoireSchema);
+const CategorieAccessoire = mongoose.model('CategorieAccessoire', categorieAccessoireSchema);
 
 module.exports = CategorieAccessoire;
