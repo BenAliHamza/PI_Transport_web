@@ -1,6 +1,5 @@
 const Accessoire = require('../models/Accessoire');
 const CategorieFavorie = require('../models/CategorieFavorie');
-const CategorieAccessoire = require('../models/categorieAccessoire');
 const { sendNotificationEmail } = require('../shared/services/transporter');
 
 // Create Accessoire
