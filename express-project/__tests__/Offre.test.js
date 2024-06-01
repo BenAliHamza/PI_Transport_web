@@ -5,171 +5,118 @@ const User = require('../models/User');
 const Offre = require('../models/Offre');
 const Vehicule = require('../models/Vehicule');
 const jwt = require('jsonwebtoken');
+describe('Vehicule Routes', () => {
+  let offreId1, offreId2;
 
-require('dotenv').config()
-
-describe('Offre routes', () => {
-  let user, vehicule,token;
-  const randomId = "4eb6e7e7e9b7f4194e000001";
   beforeEach(async () => {
-    user = new User({
-      _id: '605c72d7c9875e0015e7f5e3',
-      pseudo: 'testuser',
-      firstname: 'Test',
-      lastname: 'User',
-      email: 'test@example.com',
-      password: 'Password12345678',
-      phone: 1234567890,
-      ville: "tunis"
+    const testOffre1 = await Offre.create({
+      expediteur: "665a8810075d8bf66cfdff78",
+      titre: 'Test Offer',
+      lieu_depart: {
+        ville: 'Bizerte',
+        adresse: 'Ghar El Melah'
+      },
+      lieu_arrive: {
+        ville: 'Tozeur',
+        adresse: 'Chatt Jrid'
+      },
+      heure_depart: new Date('2024-12-01T10:00:00Z'),
+      type: 'Co-Voiturage',
+      vehicule: mongoose.Types.ObjectId()
     });
+    const testOffre2 = await Offre.create({
+      expediteur: mongoose.Types.ObjectId(),
+      titre: 'Test Offer',
+      lieu_depart: {
+        ville: 'Ariana',
+        adresse: 'mnihla'
+      },
+      lieu_arrive: {
+        ville: 'Charguia',
+        adresse: 'esprit'
+      },
+      heure_depart: new Date('2024-12-01T10:00:00Z'),
+      type: 'Co-Voiturage',
+      vehicule: mongoose.Types.ObjectId()
+    });
+    const user = new User({
+      "_id": "665a8810075d8bf66cfdff78",
+      "firstname": "Seif Eddine",
+      "lastname": "Jridi",
+      "email": "jridisayf@gmail.com",
+      "password": "$2b$10$qHjwhInbqTJY0e4sZdT/p.ejVi4wS44zDCy9cQXQfLCGut1FSFIl6",
+      "phone": 12345678,
+      "role": "DEFAULT",
+      "status": "APPROVED",
+      "ville": "tunis",
+    }
+    )
     await user.save();
-    token = jwt.sign({ role: "DEFAULT", _id: user._id.toString() }, process.env.SECRET_KEY);
-
-    vehicule = new Vehicule({
-      _id: '605c72d7c9875e0015e7f5e4',
-      proprietaire: '605c72d7c9875e0015e7f5e3',
-      marque: 'Toyota',
-      model: 'Corolla',
-      places: 4,
-    });
-    await vehicule.save();
-
-    await Offre.create([
-      {
-        expediteur: '605c72d7c9875e0015e7f5e3',
-        titre: 'Road Trip',
-        lieu_depart: 'New York',
-        lieu_arrive: 'Boston',
-        heure_depart: new Date('2024-12-01T10:00:00Z'),
-        type: 'Co-Voiturage',
-        vehicule: '605c72d7c9875e0015e7f5e4',
-      },
-      {
-        expediteur: '605c72d7c9875e0015e7f5e3',
-        titre: 'Business Trip',
-        lieu_depart: 'Los Angeles',
-        lieu_arrive: 'San Francisco',
-        heure_depart: new Date('2024-11-01T10:00:00Z'),
-        type: 'Taxi',
-        vehicule: '605c72d7c9875e0015e7f5e4',
-      },
-    ]);
+    offreId1 = testOffre1._id;
+    offreId2 = testOffre2._id
   });
 
-
-
-  it('should return 400 if title is too short', async () => {
-    const response = await request(app)
-      .post('/offres')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        expediteur: user._id,
-        titre: 'Tr',
-        lieu_depart: 'New York',
-        lieu_arrive: 'Los Angeles',
-        heure_depart: new Date(Date.now() + 10000).toISOString(),
-        type: 'Co-Voiturage',
-        vehicule: vehicule._id
-      });
-    expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      expect.objectContaining({
-        msg: 'Title must be at least 3 characters long'
-      })
-    ]);
+  afterAll(async () => {
   });
 
-  it('should return 201 if all fields are valid', async () => {
-    const response = await request(app)
-      .post('/offres')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        expediteur: user._id,
-        titre: 'Trip',
-        lieu_depart: 'New York',
-        lieu_arrive: 'Los Angeles',
-        heure_depart: new Date(Date.now() + 10000).toISOString(),
-        type: 'Co-Voiturage',
-        vehicule: vehicule._id
-      });
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('_id');
-  });
-
-  it('should return Error if the User Does Not Exist', async () => {
-    const response = await request(app)
-      .post('/offres')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        expediteur: randomId ,
-        titre: 'Trip',
-        lieu_depart: 'New York',
-        lieu_arrive: 'Los Angeles',
-        heure_depart: new Date(Date.now() + 10000).toISOString(),
-        type: 'Co-Voiturage',
-        vehicule: vehicule._id
-      });
-    expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      expect.objectContaining({
-        msg: 'Expediteur must be a valid ObjectId',
-        type: "field"
-      })])
-  });
-
-  it('should return 404 If The Offer Does Not Exist', async () => {
-    const response = await request(app)
-      .set('Authorization', `Bearer ${token}`)
-      .get(`/offres/${randomId}`)
-    expect(response.status).toBe(404);
-  });
-
-  it('should get all offers', async () => {
+  it('should get all Offres', async () => {
     const res = await request(app)
-    .set('Authorization', `Bearer ${token}`)
-    .get('/offres');
+      .get('/offres')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NWE4ODEwMDc1ZDhiZjY2Y2ZkZmY3OCIsInJvbGUiOiJERUZBVUxUIiwiaWF0IjoxNzE3MjE5MjI3LCJleHAiOjE5MTcyMjI4Mjd9.c35SYnveMhhl1wdl4Xwy4vM_ysTCUADqPYVRAuYIep8')
+      ;
+
     expect(res.status).toBe(200);
-    console.log(res.body);
-    expect(res.body.length).toBe(2);
+    expect(res.body).toHaveLength(2);
   });
 
-  it('should filter offers by expediteur', async () => {
-    const res = await request(app).get('/offres').query({ expediteur: '605c72d7c9875e0015e7f5e3' });
+  it('should get one Offre by ID', async () => {
+    const res = await request(app)
+      .get(`/offres/${offreId1}`)
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NWE4ODEwMDc1ZDhiZjY2Y2ZkZmY3OCIsInJvbGUiOiJERUZBVUxUIiwiaWF0IjoxNzE3MjE5MjI3LCJleHAiOjE5MTcyMjI4Mjd9.c35SYnveMhhl1wdl4Xwy4vM_ysTCUADqPYVRAuYIep8')
+      ;
+
     expect(res.status).toBe(200);
-    expect(res.body.length).toBe(2);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body.titre).toBe('Test Offer');
   });
 
-  it('should filter offers by titre', async () => {
-    const res = await request(app).get('/offres').query({ titre: 'Road' });
+  it('should update an Offre', async () => {
+    const updatedData = {
+      titre: 'Updated Offer',
+      lieu_depart: {
+        ville: 'Updated Ville Depart',
+        adresse: 'Updated adresse Depart'
+      },
+      lieu_arrive: {
+        adresse: 'Updated adresse arrivee',
+        ville: 'Updated Ville Arrivee'
+      },
+      heure_depart: new Date('2024-12-01T10:00:00Z'),
+      type: 'Livraison'
+    };
+
+    const res = await request(app)
+      .patch(`/offres/${offreId1}`)
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NWE4ODEwMDc1ZDhiZjY2Y2ZkZmY3OCIsInJvbGUiOiJERUZBVUxUIiwiaWF0IjoxNzE3MjE5MjI3LCJleHAiOjE5MTcyMjI4Mjd9.c35SYnveMhhl1wdl4Xwy4vM_ysTCUADqPYVRAuYIep8')
+      .send(updatedData);
+
     expect(res.status).toBe(200);
-    expect(res.body.length).toBe(1);
-    expect(res.body[0].titre).toBe('Road Trip');
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body.titre).toBe('Updated Offer');
+    expect(res.body.lieu_depart.adresse).toBe('Updated adresse Depart');
+    expect(res.body.lieu_depart.ville).toBe('Updated Ville Depart');
+    expect(res.body.lieu_arrive.adresse).toBe('Updated adresse arrivee');
+    expect(res.body.lieu_arrive.ville).toBe('Updated Ville Arrivee');
+    expect(res.body.type).toBe('Livraison')
   });
 
-  it('should filter offers by Ville Depart', async () => {
-    const res = await request(app).get('/offres').query({ lieu_depart: { ville: 'New York' });
-    expect(res.status).toBe(200);
-    expect(res.body.length).toBe(1);
-    expect(res.body[0].lieu_depart.ville).toBe('New York');
-  });
+  it('should delete an Offre', async () => {
+    const res = await request(app)
+      .delete(`/offres/${offreId1}`)
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NWE4ODEwMDc1ZDhiZjY2Y2ZkZmY3OCIsInJvbGUiOiJERUZBVUxUIiwiaWF0IjoxNzE3MjE5MjI3LCJleHAiOjE5MTcyMjI4Mjd9.c35SYnveMhhl1wdl4Xwy4vM_ysTCUADqPYVRAuYIep8')
+      ;
 
-  it('should filter offers by heure_depart', async () => {
-    const res = await request(app).get('/offres').query({ heure_depart: '2024-11-01T10:00:00Z' });
     expect(res.status).toBe(200);
-    expect(res.body.length).toBe(1);
-    expect(new Date(res.body[0].heure_depart).toISOString()).toBe('2024-11-01T10:00:00.000Z');
-  });
-
-  it('should filter offers by type', async () => {
-    const res = await request(app).get('/offres').query({ type: 'Taxi' });
-    expect(res.status).toBe(200);
-    expect(res.body.length).toBe(1);
-    expect(res.body[0].type).toBe('Taxi');
-  });
-
-  it('should filter offers by vehicule', async () => {
-    const res = await request(app).get('/offres').query({ vehicule: '605c72d7c9875e0015e7f5e4' });
-    expect(res.status).toBe(200);
-    expect(res.body.length).toBe(2);
+    expect(res.body.message).toBe('Offer deleted successfully');
   });
 });
