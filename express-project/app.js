@@ -13,6 +13,7 @@ var connectionString = process.env.CONNECTION_STRING ?? "mongodb://localhost:270
 var reclamationRouter = require('./routes/Reclamation');
 var reponseRouter = require('./routes/Reponse');
 const Reponse = require('./models/Reponse');
+var cors = require('cors')
 
 var accessoireRoutes = require('./routes/accessoireRoutes');
 const categorieFavorieRoutes = require('./routes/categorieFavorieRoutes');
@@ -37,7 +38,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors())
 app.use('/accessoires', accessoireRoutes);
 app.use('/categories', categorieAccessoireRoutes);
 app.use('/', indexRouter);
@@ -51,6 +52,7 @@ app.use('/annonce', annonceRouter);
 app.use('/reservation', reservationRouter);
 
 // hFAYEDH
+
 app.use('/reclamations', reclamationRouter);
 app.use('/reponses', reponseRouter);
 

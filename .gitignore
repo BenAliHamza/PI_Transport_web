@@ -42,3 +42,4 @@ testem.log
 Thumbs.db
 .angular
 /express-project/node_modules/
+/express-project/.env

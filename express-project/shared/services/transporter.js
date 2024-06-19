@@ -59,6 +59,7 @@ async function sendActivationEmail(user) {
     return activationLink ;
   } catch (error) {
     console.error('Error sending activation email:', error);
+    console.log(error.message);
   }
 }
 async function sendNotificationEmail(user,categorie) {

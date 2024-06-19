@@ -6,12 +6,12 @@ const validateUserCreation = [
   body('firstname')
     .notEmpty().withMessage('First name is required.')
     .isString().withMessage('First name must be a string.')
-    .matches(/^[A-Za-z]+( [A-Za-z]+)*$/).withMessage('firstname  must contain only letters.')
+    .matches(/^(?![\s.]+$)[a-zA-Z\s.]*$/).withMessage('firstname  must contain only letters.')
 ,
   body('lastname')
     .notEmpty().withMessage('Last name is required.')
     .isString().withMessage('Last name must be a string.')
-    .matches(/^[A-Za-z]+( [A-Za-z]+)*$/).withMessage('lastname  must contain only letters.'),
+    .matches(/^(?![\s.]+$)[a-zA-Z\s.]*$/).withMessage('lastname  must contain only letters.'),
   body('email')
     .notEmpty().withMessage('Email is required.')
     .matches(EMAIL_REGEX).withMessage('Email is not valid.'),
