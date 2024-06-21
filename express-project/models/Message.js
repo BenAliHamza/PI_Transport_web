@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Reclamation = require('./Reclamation');
 
-const message_schema = mongoose.Schema({
+const messageSchema = mongoose.Schema({
     expediteur:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,

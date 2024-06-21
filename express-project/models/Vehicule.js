@@ -14,8 +14,11 @@ const vehiculeSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    places:
-        { type: Number, min: 1 }
+    places: { 
+        type: Number,
+        required: true,
+        min: 1 
+    },
 }, { timestamps: true });
 
 
