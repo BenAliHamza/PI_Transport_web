@@ -1,5 +1,6 @@
 
 const multer = require('multer');
+var path = require('path');
 
 // Set the storage engine for Multer
 const storage = multer.diskStorage({
@@ -7,18 +8,28 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/'); // specify the destination directory
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // specify the filename
+    cb(null, 'image' + '-' + Date.now() + path.extname(file.originalname)); // specify the filename
   }
 });
 
 // Initialize the upload variable with the storage engine
-const upload = multer({
+const uploadSingle = multer({
   storage: storage,
   limits: { fileSize: 1000000 }, // limit file size to 1MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
-}).single('myFile'); // .single for single file upload, field name should match in the client-side form
+}).single('Image'); // .single for single file upload, field name should match in the client-side form
+
+
+// Initialize the upload variable with the storage engine
+const uploadMultiple = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // limit file size to 1MB
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).array('Images', 10); // .array for multiple file uploads, field name should match in the client-side form and specify the max count
 
 // Check File Type
 function checkFileType(file, cb) {
@@ -38,17 +49,41 @@ function checkFileType(file, cb) {
 
 
 
-const uploader = (req, res, next) => {
-  upload(req, res, (err) => {
+const uploaderSingle = (req, res, next) => {
+  uploadSingle(req, res, (err) => {
     if (err) {
       res.send({
         success: false,
         message: err
       });
     } else {
-      next();
+      res.send(req.file.filename);
     }
   })
 };
 
-module.exports = {uploader}
+const uploaderMultiple =  (req, res, next) => {
+  uploadMultiple(req, res, (err) => {
+  if (err) {
+    res.send({
+      success: false,
+      message: err
+    });
+  } else {
+    if (req.files == undefined || req.files.length === 0) {
+      res.send({
+        success: false,
+        message: 'No files selected!'
+      });
+    } else {
+      const filePaths = req.files.map(file => `uploads/${file.filename}`);
+      res.send({
+        success: true,
+        message: 'Files uploaded!',
+        files: filePaths
+      });
+    }
+  }
+});
+}
+module.exports = {uploaderMultiple, uploaderSingle}
