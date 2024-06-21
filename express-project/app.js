@@ -24,7 +24,7 @@ const annonceRouter = require('./routes/annonce');
 const reservationRouter = require('./routes/Reservation');
 const subscriptionRouter = require("./routes/Subscription")
 require('./middlewares/LogicArchiveAnnonce');
-
+const {uploaderMultiple, uploaderSingle} = require('./middlewares/multer')
 
 
 var app = express();
@@ -55,7 +55,8 @@ app.use('/reservation', reservationRouter);
 
 app.use('/reclamations', reclamationRouter);
 app.use('/reponses', reponseRouter);
-
+app.post('/abc',uploaderSingle,(req,res) => console.log(req.file.filename));
+app.post('/abcd',uploaderMultiple,(req,res) => console.log(req.file.filename));
 
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
