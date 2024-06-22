@@ -211,6 +211,15 @@ async  function getAdminAllUser(req ,res){
     res.status(500).json({ error: e.message });
   }
 }
+async  function getInfoUser(req ,res ){
+  try {
+    user = req.user;
+    delete user.password;
+    res.status(200).json(user);
+  }catch (e){
+    console.log(e)
+  }
+}
 
 async function deleteUserById(req, res){
   try {
@@ -399,4 +408,4 @@ async function verifyResetCode(req, res) {
   }
 }
 
- module.exports = {forgetPassword , verifyResetCode , updateUser ,banFunction , changePassword , addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
+ module.exports = {forgetPassword ,getInfoUser , verifyResetCode , updateUser ,banFunction , changePassword , addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}

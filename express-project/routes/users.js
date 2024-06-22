@@ -14,7 +14,7 @@ const {
   getAllUser,
   getAdminAllUser,
   deleteUserById,
-  activate_user , changePassword, banFunction, forgetPassword, verifyResetCode
+  activate_user , getInfoUser , changePassword, banFunction, forgetPassword, verifyResetCode
 } = require("../controllers/userController");
 const {verifyToken, verifyAdmin} = require("../middlewares/auth");
 const router = express.Router();
@@ -34,6 +34,7 @@ router
   .get('/ByEmail/:email', verifyToken, getUserByEmail)
   .get("/getall", verifyToken, getAllUser)
   .get("/getallAdminUsers", verifyAdmin, getAdminAllUser)
+  .get("/info" , verifyToken, getInfoUser)
   .put('/updateById/:id', verifyToken, updateUser)
   .put("/changePassword", verifyToken, changePassword)
   .delete("/delete/:id", verifyToken, deleteUserById)
