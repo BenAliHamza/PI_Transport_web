@@ -39,6 +39,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors('*'))
 
+
+app.use('/uploads',  express.static('uploads'))
+
 app.use('/accessoires', accessoireRoutes);
 app.use('/categories', categorieAccessoireRoutes);
 app.use('/', indexRouter);

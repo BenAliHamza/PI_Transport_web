@@ -17,11 +17,12 @@ const {
   activate_user , getInfoUser , changePassword, banFunction, forgetPassword, verifyResetCode
 } = require("../controllers/userController");
 const {verifyToken, verifyAdmin} = require("../middlewares/auth");
+const {uploaderSingle} = require("../middlewares/multer");
 const router = express.Router();
 
 
 router
-  .post('/', validateUserCreation, addUser)
+  .post('/', uploaderSingle , validateUserCreation, addUser)
   .post('/login', validateLogin, loginUser)
   .post('/activate_account/:token', activate_user)
   .post("/statusUpdated/:id/:type", verifyAdmin  , banFunction )
