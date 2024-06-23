@@ -5,31 +5,39 @@ const { sendNotificationEmail } = require('../shared/services/transporter');
 
 // Create Accessoire
 exports.createAccessoire = async (req, res) => {
-    const accessoire = req.body
+    const accessoire = req.body;
     if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
         return res.status(400).send("Veuillez remplir tous les champs");
     }
     if (typeof req.body.prix !== 'number' || req.body.prix < 0) {
         return res.status(400).send("Prix doit etre positive");
     }
+
     try {
+        // Check if the category exists
+        const categorie = await CategorieAccessoire.findById(req.body.categorie);
+        if (!categorie) {
+            return res.status(400).send("La catégorie spécifiée n'existe pas");
+        }
+
         const savedAccessoire = await Accessoire.create({
-          ...accessoire , expediteur : req.user._id
+            ...accessoire,
+            expediteur: req.user._id
         });
 
-         // Find users with this category as their favorite
-         const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
+        // Find users with this category as their favorite
+        const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
 
-         // Send emails to those users
-         favoriteUsers.forEach(async fav => {
-             const user = fav.user;
-             const emailText = `Hi ${user.firstname}, a new accessory in your favorite category has been added: ${accessoire.titre}.`;
-             await sendNotificationEmail(user.email, 'New Accessory Added', emailText);
-         });
+        // Send emails to those users
+        favoriteUsers.forEach(async fav => {
+            const user = fav.user;
+            const emailText = `Hi ${user.firstname}, a new accessory in your favorite category has been added: ${accessoire.titre}.`;
+            await sendNotificationEmail(user.email, 'New Accessory Added', emailText);
+        });
         res.status(201).send(savedAccessoire);
     } catch (error) {
         res.status(400).send({
-            message:error.message
+            message: error.message
         });
     }
 };
