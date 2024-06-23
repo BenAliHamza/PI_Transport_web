@@ -30,6 +30,10 @@ const accessoireSchema = new mongoose.Schema({
         ref: 'CategorieAccessoire',
         required: true,
         default : ""
+    },
+    image: {
+        type: String, // You can store the URL or file path
+        default: ""
     }
 }, { timestamps: true });
 

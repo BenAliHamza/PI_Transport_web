@@ -1,9 +1,6 @@
-// controllers/categorieFavorieController.js
-
 const CategorieFavorie = require('../models/CategorieFavorie');
 const User = require('../models/User');
-const CategorieAccessoire = require('../models/categorieAccessoire');
-
+const CategorieAccessoire = require('../models/CategorieAccessoire');
 
 // Create a new CategorieFavorie
 exports.createCategorieFavorie = async (req, res) => {
@@ -22,10 +19,7 @@ exports.createCategorieFavorie = async (req, res) => {
       return res.status(400).json({ error: `Category with ID ${favoriteCategory} does not exist` });
     }
 
-    const newCategorieFavorie = new CategorieFavorie({
-      user,
-      favoriteCategory
-    });
+    const newCategorieFavorie = new CategorieFavorie({ user, favoriteCategory });
 
     const savedCategorieFavorie = await newCategorieFavorie.save();
     res.status(201).json(savedCategorieFavorie);
@@ -34,10 +28,20 @@ exports.createCategorieFavorie = async (req, res) => {
   }
 };
 
-// Get all CategorieFavorie records
-exports.getAllCategorieFavories = async (req, res) => {
+// Get all CategorieFavorie records for admin
+exports.getAllCategorieFavoriesAdmin = async (req, res) => {
   try {
     const categorieFavories = await CategorieFavorie.find().populate('user').populate('favoriteCategory');
+    res.status(200).json(categorieFavories);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch CategorieFavories', details: error.message });
+  }
+};
+
+// Get all CategorieFavorie records for the logged user
+exports.getAllCategorieFavoriesUser = async (req, res) => {
+  try {
+    const categorieFavories = await CategorieFavorie.find({ user: req.user._id }).populate('favoriteCategory');
     res.status(200).json(categorieFavories);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch CategorieFavories', details: error.message });
@@ -111,5 +115,23 @@ exports.deleteCategorieFavorieById = async (req, res) => {
     res.status(200).json({ message: 'CategorieFavorie deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete CategorieFavorie', details: error.message });
+  }
+};
+exports.deleteCategorieFavoriesByUser = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Validate user existence
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+      return res.status(404).json({ error: `User with ID ${userId} does not exist` });
+    }
+
+    // Delete all favorite categories for the user
+    const result = await CategorieFavorie.deleteMany({ user: userId });
+
+    res.status(200).json({ message: `Deleted ${result.deletedCount} favorite categories for user ${userId}` });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete favorite categories for the user', details: error.message });
   }
 };

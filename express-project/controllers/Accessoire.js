@@ -129,3 +129,34 @@ exports.email = async (req, res) => {
         res.status(500).send(error);
     }
 };
+// Get Accessories of Connected User
+exports.getUserAccessoires = async (req, res) => {
+    try {
+        const accessoires = await Accessoire.find({ expediteur: req.user._id }).populate('categorie');
+        res.status(200).send(accessoires);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+// Delete all Accessories of a deleted user
+exports.deleteAccessoiresByUser = async (userId) => {
+    try {
+        await Accessoire.deleteMany({ expediteur: userId });
+    } catch (error) {
+        console.error(`Failed to delete accessories for user ${userId}:`, error);
+    }
+};
+
+/*exports.deleteUser = async (req, res) => {
+    try {
+        const user = await Users.findByIdAndDelete(req.params.id);
+        if (!user) return res.status(404).send();
+
+        // Delete the user's accessories
+        await deleteAccessoiresByUser(req.params.id);
+
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};*/

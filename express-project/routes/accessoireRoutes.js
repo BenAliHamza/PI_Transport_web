@@ -7,6 +7,7 @@ const {verifyToken} = require("../middlewares/auth");
 const router = express.Router();
 //
 router.post('/',verifyToken, accessoireController.createAccessoire);
+router.get('/user', verifyToken, accessoireController.getUserAccessoires);
 router.get('/',verifyToken,accessoireController.getAllAccessoires);
 router.get('/:id',verifyToken,accessoireController.getAccessoireById);
 router.patch('/:id',verifyToken,accessoireController.updateAccessoire);
