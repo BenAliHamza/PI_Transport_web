@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Offre = require("../models/Offre");
 const Vehicule = require("../models/Vehicule");
+const Reservation = require('../models/Reservation')
 
 const AddOffreController = async (req, res) => {
   try {
@@ -12,7 +13,20 @@ const AddOffreController = async (req, res) => {
   }
 }
 
+const GetPlacesDisponibleController = async (req,res) => {
+  const _id = req.params.id;
+  try {
+    const offer = await Offre.findById(_id);
+    if (!offer) {
+      return res.status(404).send({ error: 'Offer not found' });
+    }
+}
+catch (error) {
+  res.status(500).send({ error: error.message });
+}
+ return res.json({ places : await calculplacedisponible(_id)})
 
+}
 
 const GetOffreController = async (req, res) => {
   const _id = req.params.id;
@@ -129,6 +143,25 @@ const DeleteOffreController = async (req, res) => {
   }
 }
 
+const calculplacedisponible = async (idoffre)=> {
+  try {
+    // Find the offer by ID and populate the 'vehicule' field
+    const offre = await Offre.findById(idoffre).populate("vehicule");
+    if (!offre) {
+      throw new Error('Offre not found');
+    }
+    // Find all reservations for the given offer
+    const reservation_offre = await Reservation.find({ offre: offre._id });
 
+    // Calculate the total reserved places
+    const reserved_places = reservation_offre.reduce((total, res) => total + res.places, 0);
+    // Return the available places
+    return offre.vehicule.places - reserved_places;
+  } catch (error) {
+    console.error('Error calculating available places:', error);
+    throw error;  // Rethrow the error for the caller to handle
+  }
 
-module.exports = { AddOffreController, GetOffreController, GetOffresController, ConsulterOffresController ,DeleteOffreController, UpdateOffreController };
+}
+
+module.exports = { AddOffreController, GetOffreController, GetOffresController, ConsulterOffresController ,DeleteOffreController, UpdateOffreController , GetPlacesDisponibleController };
