@@ -5,7 +5,7 @@ const categorieFavorieController = require('../controllers/categorieFavorieContr
 
 router.post('/', verifyToken, categorieFavorieController.createCategorieFavorie);
 router.get('/', verifyToken, categorieFavorieController.getAllCategorieFavoriesUser);
-router.get('/admin', verifyToken, verifyAdmin, categorieFavorieController.getAllCategorieFavoriesAdmin);
+router.get('/admin', verifyAdmin, categorieFavorieController.getAllCategorieFavoriesAdmin);
 router.get('/:id', verifyToken, categorieFavorieController.getCategorieFavorieById);
 router.put('/:id', verifyToken, categorieFavorieController.updateCategorieFavorieById);
 router.delete('/:id', verifyToken, categorieFavorieController.deleteCategorieFavorieById);

@@ -4,22 +4,17 @@ const CategorieAccessoire = require('../models/CategorieAccessoire');
 
 // Create a new CategorieFavorie
 exports.createCategorieFavorie = async (req, res) => {
-  const { user, favoriteCategory } = req.body;
+  const { favoriteCategory } = req.body;
+  const userId = req.user._id; 
 
   try {
-    // Validate user
-    const userExists = await User.findById(user);
-    if (!userExists) {
-      return res.status(400).json({ error: `User with ID ${user} does not exist` });
-    }
-
     // Validate category
     const categoryExists = await CategorieAccessoire.findById(favoriteCategory);
     if (!categoryExists) {
       return res.status(400).json({ error: `Category with ID ${favoriteCategory} does not exist` });
     }
 
-    const newCategorieFavorie = new CategorieFavorie({ user, favoriteCategory });
+    const newCategorieFavorie = new CategorieFavorie({ user: userId, favoriteCategory });
 
     const savedCategorieFavorie = await newCategorieFavorie.save();
     res.status(201).json(savedCategorieFavorie);
@@ -27,6 +22,7 @@ exports.createCategorieFavorie = async (req, res) => {
     res.status(500).json({ error: 'Failed to create CategorieFavorie', details: error.message });
   }
 };
+
 
 // Get all CategorieFavorie records for admin
 exports.getAllCategorieFavoriesAdmin = async (req, res) => {

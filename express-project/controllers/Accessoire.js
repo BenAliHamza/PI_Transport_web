@@ -2,8 +2,10 @@ const Accessoire = require('../models/Accessoire');
 const CategorieFavorie = require('../models/CategorieFavorie');
 const CategorieAccessoire = require('../models/categorieAccessoire');
 const { sendNotificationEmail } = require('../shared/services/transporter');
-
+const {uploaderSingle }= require('../middlewares/multer');
+const fs = require('fs');
 // Create Accessoire
+
 exports.createAccessoire = async (req, res) => {
     const accessoire = req.body;
     if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
@@ -41,6 +43,60 @@ exports.createAccessoire = async (req, res) => {
         });
     }
 };
+
+
+
+// Create Accessoire
+/*exports.createAccessoire = async (req, res) => {
+    const accessoire = req.body;
+    if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
+        return res.status(400).send("Veuillez remplir tous les champs");
+    }
+    if (typeof req.body.prix !== 'number' || req.body.prix < 0) {
+        return res.status(400).send("Prix doit etre positive");
+    }
+
+    try {
+        // Check if the category exists
+        const categorie = await CategorieAccessoire.findById(req.body.categorie);
+        if (!categorie) {
+            return res.status(400).send("La catégorie spécifiée n'existe pas");
+        }
+
+        // Upload image file
+        uploaderSingle(req, res, async (err) => {
+            if (err) {
+                return res.status(400).send("Erreur lors du téléchargement du fichier");
+            }
+
+            const savedAccessoire = await Accessoire.create({
+                ...accessoire,
+                expediteur: req.user._id,
+                image: req.file ? req.file.filename : '' // Save the filename to the image field
+            });
+
+            // Find users with this category as their favorite
+            const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
+
+            // Send emails to those users
+            favoriteUsers.forEach(async fav => {
+                const user = fav.user;
+                const emailText = `Hi ${user.firstname}, a new accessory in your favorite category has been added: ${accessoire.titre}.`;
+                await sendNotificationEmail(user.email, 'New Accessory Added', emailText);
+            });
+            res.status(201).send(savedAccessoire);
+        });
+    } catch (error) {
+        // If there's an error, delete the uploaded file
+        if (req.file) {
+            fs.unlinkSync(req.file.path);
+        }
+        res.status(400).send({
+            message: error.message
+        });
+    }
+};
+*/
 
 //
 // Search, Filtering, and Sorting
@@ -140,12 +196,51 @@ exports.email = async (req, res) => {
 // Get Accessories of Connected User
 exports.getUserAccessoires = async (req, res) => {
     try {
-        const accessoires = await Accessoire.find({ expediteur: req.user._id }).populate('categorie');
+        let query = { expediteur: req.user._id };
+
+        // Add search filter
+        if (req.query.search) {
+            const searchRegex = new RegExp(req.query.search, 'i');
+            query.$or = [
+                { titre: { $regex: searchRegex } },
+                { description: { $regex: searchRegex } }
+            ];
+        }
+
+        // Add category filter
+        if (req.query.category) {
+            query.categorie = req.query.category;
+        }
+
+        // Add price range filter
+        if (req.query.priceMin && req.query.priceMax) {
+            query.prix = { $gte: req.query.priceMin, $lte: req.query.priceMax };
+        } else if (req.query.priceMin) {
+            query.prix = { $gte: req.query.priceMin };
+        } else if (req.query.priceMax) {
+            query.prix = { $lte: req.query.priceMax };
+        }
+
+        // Add etat filter
+        if (req.query.etat) {
+            query.etat = req.query.etat;
+        }
+
+        // Add sorting options
+        const sortOptions = {};
+        if (req.query.sort) {
+            const [sortBy, sortOrder] = req.query.sort.split(':');
+            sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+        }
+
+        // Fetch and return the accessoires
+        const accessoires = await Accessoire.find(query).populate('categorie').sort(sortOptions);
         res.status(200).send(accessoires);
     } catch (error) {
         res.status(500).send(error);
     }
 };
+
 // Delete all Accessories of a deleted user
 exports.deleteAccessoiresByUser = async (userId) => {
     try {
