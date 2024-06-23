@@ -19,13 +19,13 @@ const uploadSingle = multer({
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
-}).single('Image'); // .single for single file upload, field name should match in the client-side form
+}).single('image'); // .single for single file upload, field name should match in the client-side form
 
 
 // Initialize the upload variable with the storage engine
 const uploadMultiple = multer({
   storage: storage,
-  limits: { fileSize: 1000000 }, // limit file size to 1MB
+  limits: { fileSize: 10000000 }, // limit file size to 1MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
@@ -54,10 +54,12 @@ const uploaderSingle = (req, res, next) => {
     if (err) {
       res.send({
         success: false,
-        message: err
+        message: err.message
       });
     } else {
-      res.send(req.file.filename);
+      console.log(req.file)
+      console.log(req.body)
+      next();
     }
   })
 };
