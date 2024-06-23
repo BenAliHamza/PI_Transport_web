@@ -9,7 +9,7 @@ const categorieFavorieSchema = new Schema({
   },
   favoriteCategory: {
     type: Schema.Types.ObjectId,
-    ref: 'Category',
+    ref: 'CategorieAccessoire',
     required: true
   }
 });
