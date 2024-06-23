@@ -4,7 +4,7 @@ const router = express.Router();
 const Offre = require('../models/Offre'); // Adjust the path as needed
 const { AddOffreValidator, UpdateOffreValidator, GetOffresValidator, GetOffreValidator } = require('../middlewares/validators/Offre')
 const { verifyToken } = require("./../middlewares/auth");
-const { AddOffreController, GetOffreController, GetOffresController, UpdateOffreController , DeleteOffreController, ConsulterOffresController } = require("./../controllers/Offre");
+const { AddOffreController, GetOffreController, GetOffresController, UpdateOffreController , DeleteOffreController, GetPlacesDisponibleController, ConsulterOffresController } = require("./../controllers/Offre");
 const User = require('./../models/User');
 const Vehicule = require('../models/Vehicule');
 
@@ -45,6 +45,7 @@ router.get('/:id', verifyToken, GetOffreValidator, validate, GetOffreController)
 
 
 router.get('/', GetOffresValidator, validate, verifyToken, GetOffresController);
+router.get('/:id/placesDisponible', validate , verifyToken, GetPlacesDisponibleController)
 router.delete('/:id', GetOffreValidator, validate, verifyToken , DeleteOffreController );
 
 module.exports = router;
