@@ -32,7 +32,8 @@ const userSchema = new Schema(
       default: "PENDING",
       match: STATUS_REGEX, // Only allows specific statuses
     },
-    ville :  {type : String , required : true }
+    ville :  {type : String , required : true } ,
+    sex : {type : String  , default: "male" },
   },
   { versionKey: false, timestamps: true }
 );

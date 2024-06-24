@@ -22,10 +22,12 @@ function isAdmin(user){
            message: "User email already exists",
          })
        } else {
+         const {sex} = req.body.sex ;
+         console.log(req.file.filename)
          const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
-         const image = req.file?.filename? req.file.filename:'uploads/male.png';
+         const image = req.file?.filename? req.file.filename:`${sex}.png`;
          const newUser = await User.create({...req.body, password: hashedPassword ,
-          image : image
+          image : 'http://localhost:3000/uploads/' +image
          });
          console.log(newUser)
          const confirmation_link = await sendActivationEmail(newUser);

@@ -3,6 +3,7 @@ const Reservation = require('../models/Reservation');
 const Offre = require("./../models/Offre");
 const Vehicule = require("../models/Vehicule")
 const {sendReservationEmail  }  = require('../shared/services/transporter')
+const params = require("karma/lib/browser");
 
 // Fonction pour créer une réservation
 const createReservation = async (req, res) => {
@@ -108,7 +109,16 @@ const calculplacedisponible = async (idoffre)=> {
   }
 
 }
+const getById = async (req , res) =>{
+  try{
+    const id = req.params.id;
+    const reservation = await Reservation.findById(id);
+    res.status(200).json(reservation);
 
+  }catch (e){
+
+  }
+}
 // Exportation de la fonction
 module.exports = {
     createReservation,
@@ -117,5 +127,5 @@ module.exports = {
     deleteReservation,
     acceptReservation,
     refuseReservation,
-    getAllReservationsByFilter
+    getAllReservationsByFilter , getById
 };

@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Importation du contrôleur
 
-const { createReservation, getAllReservationsByUser, getAllReservationsByFilter, updateReservation, deleteReservation, acceptReservation, refuseReservation } = require('../controllers/Reservation');
+const { createReservation , getById, getAllReservationsByUser, getAllReservationsByFilter, updateReservation, deleteReservation, acceptReservation, refuseReservation } = require('../controllers/Reservation');
 const { verifyToken } = require('../middlewares/auth');
 
 // Route pour créer une réservation
@@ -18,6 +18,7 @@ router.post('/',verifyToken  ,createReservation); // à ajouter :offreID
 
 router.get('/',verifyToken  , getAllReservationsByUser);// :userId
 
+router.get('/:id',verifyToken  , getById);// :userId
 
 router.get('/filter', verifyToken  ,getAllReservationsByFilter); // :userId
 
