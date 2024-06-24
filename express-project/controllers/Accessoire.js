@@ -24,7 +24,8 @@ exports.createAccessoire = async (req, res) => {
 
         const savedAccessoire = await Accessoire.create({
             ...accessoire,
-            expediteur: req.user._id
+            expediteur: req.user._id,
+            image : req.file.filename
         });
 
         // Find users with this category as their favorite
@@ -43,60 +44,6 @@ exports.createAccessoire = async (req, res) => {
         });
     }
 };
-
-
-
-// Create Accessoire
-/*exports.createAccessoire = async (req, res) => {
-    const accessoire = req.body;
-    if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
-        return res.status(400).send("Veuillez remplir tous les champs");
-    }
-    if (typeof req.body.prix !== 'number' || req.body.prix < 0) {
-        return res.status(400).send("Prix doit etre positive");
-    }
-
-    try {
-        // Check if the category exists
-        const categorie = await CategorieAccessoire.findById(req.body.categorie);
-        if (!categorie) {
-            return res.status(400).send("La catégorie spécifiée n'existe pas");
-        }
-
-        // Upload image file
-        uploaderSingle(req, res, async (err) => {
-            if (err) {
-                return res.status(400).send("Erreur lors du téléchargement du fichier");
-            }
-
-            const savedAccessoire = await Accessoire.create({
-                ...accessoire,
-                expediteur: req.user._id,
-                image: req.file ? req.file.filename : '' // Save the filename to the image field
-            });
-
-            // Find users with this category as their favorite
-            const favoriteUsers = await CategorieFavorie.find({ favoriteCategory: req.body.categorie }).populate('user');
-
-            // Send emails to those users
-            favoriteUsers.forEach(async fav => {
-                const user = fav.user;
-                const emailText = `Hi ${user.firstname}, a new accessory in your favorite category has been added: ${accessoire.titre}.`;
-                await sendNotificationEmail(user.email, 'New Accessory Added', emailText);
-            });
-            res.status(201).send(savedAccessoire);
-        });
-    } catch (error) {
-        // If there's an error, delete the uploaded file
-        if (req.file) {
-            fs.unlinkSync(req.file.path);
-        }
-        res.status(400).send({
-            message: error.message
-        });
-    }
-};
-*/
 
 //
 // Search, Filtering, and Sorting
