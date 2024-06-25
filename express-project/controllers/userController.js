@@ -13,7 +13,6 @@ function isAdmin(user){
 
  async function   addUser(req, res) {
    try {
-     console.log(req.body)
      const {email, password} = req.body;
      if (email) {
        const user = await User.findOne({email: email});
@@ -23,15 +22,12 @@ function isAdmin(user){
          })
        } else {
          const {sex} = req.body.sex ;
-         console.log(req.file.filename)
          const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
          const image = req.file?.filename? req.file.filename:`${sex}.png`;
          const newUser = await User.create({...req.body, password: hashedPassword ,
           image : 'http://localhost:3000/uploads/' +image
          });
-         console.log(newUser)
          const confirmation_link = await sendActivationEmail(newUser);
-         console.log(confirmation_link)
         return  res.status(200).json({
            confirmation_link : confirmation_link,
            message: "New user has been created !!!, an EMAIL has been sent for verification and validation of the account",
@@ -269,7 +265,9 @@ async function updateUser(req, res) {
     if(!isAuthorized){
       return   res.status(403).json({ message: 'You are not allowed to update this user' });
     }
-    const updates  = req.body;
+    const image = req.file?.filename;
+
+    const updates  = image ?{...req.body , image :image} : req.body;
     if(updates.password){
       delete updates.password;
     }
@@ -346,7 +344,6 @@ async function banFunction(req, res){
 async function forgetPassword(req, res){
   try{
     const email = req.body.email ;
-    console.log(email)
     if(!email) {
       return res.status(404).json({
         message : "User email is required !!! "
@@ -365,7 +362,7 @@ async function forgetPassword(req, res){
 
     res.status(200).json({
       message: "Reset email sent successfully." ,
-      confirmationLink : resetlink
+      confirmationLink : resetCode
     });
   }catch(err){
     res.status(500).json({

@@ -36,7 +36,7 @@ router
   .get("/getall", verifyToken, getAllUser)
   .get("/getallAdminUsers", verifyAdmin, getAdminAllUser)
   .get("/info" , verifyToken, getInfoUser)
-  .put('/updateById/:id', verifyToken, updateUser)
+  .put('/updateById/:id',uploaderSingle ,  verifyToken, updateUser)
   .put("/changePassword", verifyToken, changePassword)
   .delete("/delete/:id", verifyToken, deleteUserById)
   .delete('/deleteall', verifyAdmin, deleteAllUsers);

@@ -26,35 +26,35 @@ oAuth_client.setCredentials({
 async function sendActivationEmail(user) {
   try {
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
-    const activationLink = `http://localhost:3000/users/activate_account/${token}`;
-    // const access = await oAuth_client.getAccessToken();
-    // const transporter = nodemailer.createTransport({
-    //   service: 'gmail', // Use 'gmail' for Gmail SMTP
-    //   auth: {
-    //     type: 'OAuth2',
-    //     user: 'espritcotransport@gmail.com',
-    //     clientId: CLIENT_ID,
-    //     clientSecret: CLIENT_SECRET,
-    //     refreshToken: REFRESH_TOKEN,
-    //     accessToken: access,
-    //   }
-    // });
+    const activationLink = `${token}`;
+    const access = await oAuth_client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Use 'gmail' for Gmail SMTP
+      auth: {
+        type: 'OAuth2',
+        user: 'espritcotransport@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: access,
+      }
+    });
 
-    // const templatePath = path.resolve(__dirname, '../email_templates/activation_email_template.html');
-    // const htmlContent = await ejs.renderFile(templatePath, {
-    //   name: user.firstname,
-    //   email: user.email,
-    //   link: activationLink
-    // });
+    const templatePath = path.resolve(__dirname, '../email_templates/activation_email_template.html');
+    const htmlContent = await ejs.renderFile(templatePath, {
+      name: user.firstname,
+      email: user.email,
+      link: activationLink
+    });
 
-    // const mailOptions = {
-    //   from: process.env.EMAIL,
-    //   to: user.email,
-    //   subject: 'Account Activation',
-    //   html: htmlContent,
-    // };
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: user.email,
+      subject: 'Account Activation',
+      html: htmlContent,
+    };
 
-    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     console.log(`Activation email sent to ${user.email}`);
     return activationLink ;
   } catch (error) {
@@ -168,7 +168,7 @@ async function sendAnnonceEmail(user) {
 }
 async function sendResetEmail(user, resetCode){
   try {
-    const resetLink = `http://localhost:3000/users/reset_password_confirmation/${resetCode}`;
+    const resetLink = `http://localhost:4200/#/co-transport/reset_password_confirmation/${resetCode}`;
     const access = await oAuth_client.getAccessToken();
     const transporter = nodemailer.createTransport({
       service: 'gmail', // Use 'gmail' for Gmail SMTP
