@@ -14,7 +14,7 @@ const {
   getAllUser,
   getAdminAllUser,
   deleteUserById,
-  activate_user , getInfoUser , changePassword, banFunction, forgetPassword, verifyResetCode
+  activate_user , getInfoUser , changePassword, banFunction, forgetPassword, verifyResetCode , updateImage
 } = require("../controllers/userController");
 const {verifyToken, verifyAdmin} = require("../middlewares/auth");
 const {uploaderSingle} = require("../middlewares/multer");
@@ -36,7 +36,8 @@ router
   .get("/getall", verifyToken, getAllUser)
   .get("/getallAdminUsers", verifyAdmin, getAdminAllUser)
   .get("/info" , verifyToken, getInfoUser)
-  .put('/updateById/:id',uploaderSingle ,  verifyToken, updateUser)
+  .put('/updateById/:id' ,  verifyToken, updateUser)
+  .put('/updateImage',uploaderSingle ,  verifyToken, updateImage)
   .put("/changePassword", verifyToken, changePassword)
   .delete("/delete/:id", verifyToken, deleteUserById)
   .delete('/deleteall', verifyAdmin, deleteAllUsers);

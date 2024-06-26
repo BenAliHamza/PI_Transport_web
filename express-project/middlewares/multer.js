@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 // Initialize the upload variable with the storage engine
 const uploadSingle = multer({
   storage: storage,
-  limits: { fileSize: 1000000 }, // limit file size to 1MB
+  limits: { fileSize: 1000000000 }, // limit file size to 1MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
@@ -25,7 +25,7 @@ const uploadSingle = multer({
 // Initialize the upload variable with the storage engine
 const uploadMultiple = multer({
   storage: storage,
-  limits: { fileSize: 10000000 }, // limit file size to 1MB
+  limits: { fileSize: 10000000000 }, // limit file size to 1MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
@@ -52,6 +52,7 @@ function checkFileType(file, cb) {
 const uploaderSingle = (req, res, next) => {
   uploadSingle(req, res, (err) => {
     if (err) {
+      console.log(err)
       res.send({
         success: false,
         message: err.message

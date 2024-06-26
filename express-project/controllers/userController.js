@@ -265,9 +265,7 @@ async function updateUser(req, res) {
     if(!isAuthorized){
       return   res.status(403).json({ message: 'You are not allowed to update this user' });
     }
-    const image = req.file?.filename;
-
-    const updates  = image ?{...req.body , image :image} : req.body;
+    const updates  =  req.body;
     if(updates.password){
       delete updates.password;
     }
@@ -412,5 +410,25 @@ async function verifyResetCode(req, res) {
     });
   }
 }
+async  function updateImage(req,res){
 
- module.exports = {forgetPassword ,getInfoUser , verifyResetCode , updateUser ,banFunction , changePassword , addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
+  let   image = req.file?.filename ;
+  const user = req.user ;
+  if(!image){
+    return res.status(404).json({
+      message : "Error with Image upload"
+    })
+  }
+  image =  'http://localhost:3000/uploads/' +image
+
+  const updates = {image: image}
+  try {
+    const updatedUser = await User.findByIdAndUpdate(user._id, updates, { new: true });
+    res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+  }catch (e){
+    res.status(500).json(e)
+  }
+
+}
+
+ module.exports = {forgetPassword,updateImage ,getInfoUser , verifyResetCode , updateUser ,banFunction , changePassword , addUser, deleteAllUsers , getUserByTypeForSimpleUser , loginUser , getUserByType,activate_user  , getUserById , getUserByEmail , getUserByNumber , getAllUser , getAdminAllUser , deleteUserById}
