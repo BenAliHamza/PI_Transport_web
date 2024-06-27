@@ -9,10 +9,14 @@ const fs = require('fs');
 exports.createAccessoire = async (req, res) => {
     const accessoire = req.body;
     if (!req.body.description || !req.body.titre || !req.body.prix || !req.body.categorie) {
-        return res.status(400).send("Veuillez remplir tous les champs");
+        return res.status(400).json({
+          message : "Veuillez remplir tous les champs"
+        });
     }
-    if (typeof req.body.prix !== 'number' || req.body.prix < 0) {
-        return res.status(400).send("Prix doit etre positive");
+    if ( req.body.prix < 0) {
+        return res.status(400).json({
+          message : "Prix doit etre positive"
+        });
     }
 
     try {
@@ -25,7 +29,7 @@ exports.createAccessoire = async (req, res) => {
         const savedAccessoire = await Accessoire.create({
             ...accessoire,
             expediteur: req.user._id,
-            image : req.file.filename
+            image : 'http://localhost:3000/uploads/' + req.file.filename
         });
 
         // Find users with this category as their favorite
@@ -91,7 +95,7 @@ exports.getAllAccessoires = async (req, res) => {
 // Get Accessoire by ID
 exports.getAccessoireById = async (req, res) => {
     try {
-        const accessoire = await Accessoire.findById(req.params.id).populate('categorie');
+        const accessoire = await Accessoire.findById(req.params.id).populate(['categorie' ,'expediteur'] ,);
         if (!accessoire) return res.status(404).send();
         res.status(200).send(accessoire);
     } catch (error) {
@@ -104,7 +108,7 @@ exports.updateAccessoire = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).send("Veuillez modifier un champs");
     }
-    if (req.body.prix && (typeof req.body.prix !== 'number' || req.body.prix < 0)) {
+    if (req.body.prix &&  req.body.prix < 0) {
         return res.status(400).send("Prix doit etre positive");
     }
     try {

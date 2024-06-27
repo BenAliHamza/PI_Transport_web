@@ -20,7 +20,7 @@ const accessoireSchema = new mongoose.Schema({
         type: Number,
         min: 0
     },
-    etat: {
+      etat: {
         type: String,
         enum: ["Vendue", "Disponible"],
         default: "Disponible"
