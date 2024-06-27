@@ -9,9 +9,9 @@ const { uploaderSingle} = require('../middlewares/multer')
 //
 router.post('/',verifyToken,  uploaderSingle,accessoireController.createAccessoire);
 router.get('/user', verifyToken, accessoireController.getUserAccessoires);
-router.get('/',verifyToken,accessoireController.getAllAccessoires);
-router.get('/:id',verifyToken,accessoireController.getAccessoireById);
+router.get('/' , accessoireController.getAllAccessoires);
+router.get('/:id',accessoireController.getAccessoireById);
 router.patch('/:id',verifyToken,accessoireController.updateAccessoire);
 router.delete('/:id',verifyToken,accessoireController.deleteAccessoire);
-
 module.exports = router;
+

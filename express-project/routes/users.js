@@ -30,7 +30,7 @@ router
   .post('/reset_password_confirmation/:token' , verifyResetCode )
   .get('/admin/filterby', verifyAdmin, getUserByType)
   .get('/defaultUser/filterby', verifyToken, getUserByTypeForSimpleUser)
-  .get('/byId/:id', verifyToken, getUserById)
+  .get('/byId/:id', getUserById)
   .get('/byPhone/:phone', verifyToken, getUserByNumber)
   .get('/ByEmail/:email', verifyToken, getUserByEmail)
   .get("/getall", verifyToken, getAllUser)

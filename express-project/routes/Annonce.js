@@ -7,8 +7,8 @@ const {verifyToken} = require("../middlewares/auth");
 const router = express.Router()
 
 router.post('', verifyToken,  createAnnonce)
-router.get('',verifyToken ,  getAll)
-router.get('/:id',verifyToken ,  getById)
+router.get('' ,  getAll)
+router.get('/:id' ,  getById)
 router.put('/:id',verifyToken ,  updateAnnonce)
 router.delete('/:id',verifyToken ,  deleteAnnonce)
 
