@@ -6,6 +6,7 @@ const {verifyToken} = require("../middlewares/auth");
 router.post('/', verifyToken, reclamationController.createReclamation);
 router.get('/', verifyToken, reclamationController.getReclamations);
 router.get('/:id', verifyToken, reclamationController.getReclamationById);
+router.get('/user/:id', verifyToken, reclamationController.getReclamationsByUserId);
 router.put('/:id',verifyToken,  reclamationController.updateReclamation);
 router.delete('/:id',verifyToken,  reclamationController.deleteReclamation);
 

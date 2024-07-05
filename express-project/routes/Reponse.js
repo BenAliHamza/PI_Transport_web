@@ -12,6 +12,7 @@ router.get('/:id', verifyAdmin , reponseController.getReponse);
 
 
 router.put('/:id', reponseController.updateReponse);
+router.get('/reclamation/:reclamationId', verifyAdmin, reponseController.getReponseByReclamationId);
 
 
 module.exports = router;

@@ -89,4 +89,16 @@ exports.updateReponse = async (req, res) => {
 
 // controllers/reponseController.js
 
-
+// New controller function
+exports.getReponseByReclamationId = async (req, res) => {
+  try {
+    const reclamationId = req.params.reclamationId;
+    const response = await Reponse.findOne({ reclamation: reclamationId }).populate(["reclamation", "expediteur"]);
+    if (!response) {
+      return res.status(200).send(null);
+    }
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

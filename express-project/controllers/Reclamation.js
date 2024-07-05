@@ -123,3 +123,13 @@ exports.deleteReclamation = async (req, res) => {
         res.status(500).send(error);
     }
 };
+exports.getReclamationsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const reclamations = await Reclamation.find({ expediteur: userId }).populate('expediteur');
+    res.send(reclamations);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
