@@ -33,7 +33,7 @@ router
   .get('/byId/:id', getUserById)
   .get('/byPhone/:phone', verifyToken, getUserByNumber)
   .get('/ByEmail/:email', verifyToken, getUserByEmail)
-  .get("/getall", verifyToken, getAllUser)
+  .get("/getall", getAllUser)
   .get("/getallAdminUsers", verifyAdmin, getAdminAllUser)
   .get("/info" , verifyToken, getInfoUser)
   .put('/updateById/:id' ,  verifyToken, updateUser)

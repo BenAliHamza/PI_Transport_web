@@ -44,7 +44,7 @@ router.get('/consulter', verifyToken, GetOffresValidator, ConsulterOffresControl
 router.get('/:id', verifyToken, GetOffreValidator, validate, GetOffreController);
 router.get('/all', GetAllOffresController)
 
-router.get('/', GetOffresValidator, validate, verifyToken, GetOffresController);
+router.get('/', GetOffresValidator, validate, GetOffresController);
 router.get('/:id/placesDisponible', validate , verifyToken, GetPlacesDisponibleController)
 router.delete('/:id', GetOffreValidator, validate, verifyToken , DeleteOffreController );
 
