@@ -3,6 +3,7 @@ var Vehicule = require('../models/Vehicule')
 
 const AddVehiculeController = async (req, res) => {
   try {
+    console.log(req.file);
     const vehicule = new Vehicule({...req.body,proprietaire: req.user._id});
     await vehicule.save();
     res.status(201).json(vehicule);

@@ -19,6 +19,10 @@ const vehiculeSchema = mongoose.Schema({
         required: true,
         min: 1 
     },
+    image : {
+        type : String,
+        default : 'https://th.bing.com/th/id/OIP.YzUQX26CfWsEy6A0sfPmugAAAA?rs=1&pid=ImgDetMain'
+    }
 }, { timestamps: true });
 
 

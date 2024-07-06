@@ -24,6 +24,12 @@ const reservationRouter = require('./routes/Reservation');
 const subscriptionRouter = require("./routes/Subscription")
 require('./middlewares/LogicArchiveAnnonce');
 const {uploaderMultiple, uploaderSingle} = require('./middlewares/multer')
+const axios = require('axios');
+
+const apiKey = 'YOUR_OPENROUTESERVICE_API_KEY';
+const origin = [8.681495, 49.41461]; // Starting point [longitude, latitude]
+const destination = [8.687872, 49.420318]; // Ending point [longitude, latitude]
+
 
 
 var app = express();

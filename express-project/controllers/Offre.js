@@ -42,15 +42,36 @@ const GetOffreController = async (req, res) => {
 }
 const ConsulterOffresController = async (req, res) => {
   const _id = req.user._id;
-  try {
-    const offer = await Offre.find({expediteur : _id });
-    if (!offer) {
-      return res.status(404).send({ error: 'Offer not found' });
-    }
-    res.status(200).send(offer);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
+  const { heure_depart, ville_depart, adresse_depart, ville_arrive, adresse_arrive, type } = req.query;
+
+  const filter = {};
+
+  if (ville_depart) {
+    filter['lieu_depart.ville'] = new RegExp(ville_depart, 'i');
   }
+  if (adresse_depart) {
+    filter['lieu_depart.adresse'] = new RegExp(adresse_depart, 'i');
+  }
+  if (ville_arrive) {
+    filter['lieu_arrive.ville'] = new RegExp(ville_arrive, 'i');
+  }
+  if (adresse_arrive) {
+    filter['lieu_arrive.adresse'] = new RegExp(adresse_arrive, 'i');
+  } 
+
+  if (req.query.heure_depart) {
+    filter.heure_depart = { $gte: heure_depart };
+  }
+  if (type) {
+    filter.type = type;
+  }
+try {
+  const offres = await Offre.find({...filter, expediteur: req.user._id});
+  console.log(offres);
+  res.json(offres);
+} catch (error) {
+  next(error);
+}
 }
 const GetOffresController = async (req, res, next) => {
 
@@ -77,9 +98,42 @@ const GetOffresController = async (req, res, next) => {
     if (type) {
       filter.type = type;
     }
-
   try {
-    const offres = await Offre.find(filter);
+    const offres = await Offre.find({...filter, expediteur: {$ne: req.user._id}});
+    console.log(offres);
+    res.json(offres);
+  } catch (error) {
+    next(error);
+  }
+}
+const GetAllOffresController = async (req, res, next) => {
+
+  const { heure_depart, ville_depart, adresse_depart, ville_arrive, adresse_arrive, type } = req.query;
+
+    const filter = {};
+
+    if (ville_depart) {
+      filter['lieu_depart.ville'] = new RegExp(ville_depart, 'i');
+    }
+    if (adresse_depart) {
+      filter['lieu_depart.adresse'] = new RegExp(adresse_depart, 'i');
+    }
+    if (ville_arrive) {
+      filter['lieu_arrive.ville'] = new RegExp(ville_arrive, 'i');
+    }
+    if (adresse_arrive) {
+      filter['lieu_arrive.adresse'] = new RegExp(adresse_arrive, 'i');
+    }
+
+    if (req.query.heure_depart) {
+      filter.heure_depart = { $gte: heure_depart };
+    }
+    if (type) {
+      filter.type = type;
+    }
+  try {
+    const offres = await Offre.find({...filter});
+    console.log(offres);
     res.json(offres);
   } catch (error) {
     next(error);
@@ -164,4 +218,4 @@ const calculplacedisponible = async (idoffre)=> {
 
 }
 
-module.exports = { AddOffreController, GetOffreController, GetOffresController, ConsulterOffresController ,DeleteOffreController, UpdateOffreController , GetPlacesDisponibleController };
+module.exports = { AddOffreController, GetOffreController, GetOffresController,GetAllOffresController, ConsulterOffresController ,DeleteOffreController, UpdateOffreController , GetPlacesDisponibleController };
